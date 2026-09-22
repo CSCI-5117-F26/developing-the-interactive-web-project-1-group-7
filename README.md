@@ -11,6 +11,7 @@ CSCI 5117, Fall 2026, [assignment description](https://canvas.umn.edu/courses/57
 ### Students
 
 * Amelia Vrieze, vriez051@umn.edu
+* Rezky Dwisantika, dwisa001@umn.edu
 * ...
 
 
