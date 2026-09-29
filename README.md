@@ -11,7 +11,9 @@ CSCI 5117, Fall 2026, [assignment description](https://canvas.umn.edu/courses/57
 ### Students
 
 * Amelia Vrieze, vriez051@umn.edu
-* ...
+* Rezky Dwisantika, dwisa001@umn.edu
+* Hema Poojitha Chandu, chand968@umn.edu
+* Mayli Winters, winte928@umn.edu
 
 
 ## Key Features
@@ -37,7 +39,10 @@ along with a very brief caption:**
 
 
 ## Mock-up 
+**Mockup Link:**
+[Mixtape Figma](https://www.figma.com/design/gbpX9Qh82GEYrpzjKzrwg2/5117--HARMless?node-id=0-1&t=v8DBNMLFY3cpP2J9-1)
 
+{
 There are a few tools for mock-ups. Paper prototypes (low-tech, but effective and cheap), Digital picture edition software (gimp / photoshop / etc.), or dedicated tools like moqups.com (I'm calling out moqups here in particular since it seems to strike the best balance between "easy-to-use" and "wants your money" -- the free teir isn't perfect, but it should be sufficient for our needs with a little "creative layout" to get around the page-limit)
 
 In this space please either provide images (around 4) showing your prototypes, OR, a link to an online hosted mock-up tool like moqups.com
@@ -45,7 +50,7 @@ In this space please either provide images (around 4) showing your prototypes, O
 **[Add images/photos that show your paper prototype (around 4)](https://stackoverflow.com/questions/10189356/how-to-add-screenshot-to-readmes-in-github-repository) along with a very brief caption:**
 
 ![](https://media.giphy.com/media/26ufnwz3wDUli7GU0/giphy.gif)
-
+}
 
 ## External Dependencies
 
