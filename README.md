@@ -39,47 +39,48 @@ along with a very brief caption:**
 
 
 ## Mock-up 
-**Mockup Link:**
-[Mixtape Figma](https://www.figma.com/design/gbpX9Qh82GEYrpzjKzrwg2/5117--HARMless?node-id=0-1&t=v8DBNMLFY3cpP2J9-1)
+**Mixtape:**
+[Link to Figma](https://www.figma.com/design/gbpX9Qh82GEYrpzjKzrwg2/5117--HARMless?node-id=0-1&t=v8DBNMLFY3cpP2J9-1)
 
-There are a few tools for mock-ups. Paper prototypes (low-tech, but effective and cheap), Digital picture edition software (gimp / photoshop / etc.), or dedicated tools like moqups.com (I'm calling out moqups here in particular since it seems to strike the best balance between "easy-to-use" and "wants your money" -- the free teir isn't perfect, but it should be sufficient for our needs with a little "creative layout" to get around the page-limit)
+<!-- There are a few tools for mock-ups. Paper prototypes (low-tech, but effective and cheap), Digital picture edition software (gimp / photoshop / etc.), or dedicated tools like moqups.com (I'm calling out moqups here in particular since it seems to strike the best balance between "easy-to-use" and "wants your money" -- the free teir isn't perfect, but it should be sufficient for our needs with a little "creative layout" to get around the page-limit)
 
 In this space please either provide images (around 4) showing your prototypes, OR, a link to an online hosted mock-up tool like moqups.com
 
 **[Add images/photos that show your paper prototype (around 4)](https://stackoverflow.com/questions/10189356/how-to-add-screenshot-to-readmes-in-github-repository) along with a very brief caption:**
+-->
 
+**1. Guest view of the homepage**
 ![](mockups/guest-homepage.png)
-**Guest view of the homepage**
 <br><br>
+**2. Auth0 Sign In Page**
 ![](mockups/login.png)
-**Auth0 Sign In Page**
 <br><br>
+**3. Auth0 Sign Up Page**
 ![](mockups/signup.png)
-**Auth0 Sign Up Page**
 <br><br>
+**4. Logged in User Homepage**
 ![](mockups/Homepage.png)
-**Logged in User Homepage**
 <br><br>
-![](mockups/my-account.png)
-**My Account Page**
-<br><br>
-![](mockups/my-mixtape.png)
-**View My Mixtape Page**
-<br><br>
+**5. Search Box**
 ![](mockups/Search.png)
-**Search Box**
 <br><br>
+**6. View Other Person's Mixtape**
 ![](mockups/view-mixtape.png)
-**View Other Person's Mixtape**
 <br><br>
-![](mockups/add-mixtape.png)
-**Create a Mixtape**
-<br><br>
-![](mockups/delete-mixtape.png)
-**Delete my Mixtape**
-<br><br>
+**7. Remix Someone Else's Mixtape**
 ![](mockups/remix-mixtape.png)
-**Remix Someone Else's Mixtape**
+<br><br>
+**8. My Account Page**
+![](mockups/my-account.png)
+<br><br>
+**9. Create a Mixtape**
+![](mockups/add-mixtape.png)
+<br><br>
+**10. View My Mixtape Page**
+![](mockups/my-mixtape.png)
+<br><br>
+**11. Delete my Mixtape**
+![](mockups/delete-mixtape.png)
 <br><br>
 
 ## External Dependencies
