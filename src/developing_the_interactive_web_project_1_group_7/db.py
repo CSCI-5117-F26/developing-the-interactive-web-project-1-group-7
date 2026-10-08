@@ -1,0 +1,1 @@
+If you add anything secret to this file move it to .gitignore before committing
