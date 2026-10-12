@@ -1,1 +1,4 @@
-If you add anything secret to this file move it to .gitignore before committing
+import os
+
+
+db_url = os.environ("DATABASE_URL")
