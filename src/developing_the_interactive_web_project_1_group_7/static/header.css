@@ -1,3 +1,10 @@
+/* I used https://fonts.google.com/ to pick a font, feel free to change */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+h1 {
+    font-family: 'Press Start 2P', monospace;
+}
+
 header {
     background-color: black;
     padding: 15px 40px;
@@ -17,4 +24,21 @@ nav input {
     width: 100%;
     padding: 10px;
     border-radius: 20px;
+}
+
+.add, .profile {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    margin-left: 2em;
+}
+
+h1 span:nth-child(1) {
+    color: #FF6A00;
+}
+h1 span:nth-child(2) {
+    color: #00D6C4;
+}
+h1 span:nth-child(3) {
+    color: #FFBB00;
 }

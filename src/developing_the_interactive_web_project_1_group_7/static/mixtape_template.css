@@ -1,0 +1,23 @@
+.mixtape-card {
+    background-color: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
+    border-radius: 20px;
+    padding: 15px;
+    margin: 20px;
+}
+
+.mixtape-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.mixtapes {
+    width: 90%;
+    margin: 0 auto;
+}
+
+.mixtape-info {
+    display: flex;
+    justify-content: space-between;
+}

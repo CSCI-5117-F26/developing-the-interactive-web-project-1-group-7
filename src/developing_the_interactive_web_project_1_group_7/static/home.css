@@ -9,8 +9,9 @@ h2 {
 
 .filters {
     display: flex;
-    gap: 100px;
+    gap: 30px;
     padding-left: 50px;
+    flex-wrap: wrap;
 }
 
 .filters ul {
@@ -18,6 +19,7 @@ h2 {
     display: flex;
     gap: 10px;
     padding: 0;
+    flex-wrap: wrap;
 }
 
 .filters .pure-button {

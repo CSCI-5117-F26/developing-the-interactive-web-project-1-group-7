@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mixtape</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.1.0/build/pure-min.css" integrity="sha384-kj0X2NG2KHBie8Tq8fH1kxnyWM9XsXQpq7XdwbKmFKjwwaXGKBlB2Klu3VOltSFx" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.1.0/build/grids-responsive-min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='header.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='mixtape_template.css') }}">
 </head>
 <body>
     {% include "header.html" %}
@@ -25,7 +27,16 @@
         </ul>
     </div>
 
-    {% include "mixtape_template.html" %}
+    <div class="mixtapes">
+        <div class="pure-g">
+            <!-- In the future we can change so its i in range(#), I just chose 9 as filler for now-->
+            {% for i in range(9) %}
+                <div class="pure-u-1 pure-u-md-1-2 pure-u-lg-1-3">
+                    {% include "mixtape_template.html" %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
     <!-- {% for mixtape in mixtapes %}
         {% include "mixtape_template.html" %}
     {% endfor %} -->
