@@ -6,22 +6,24 @@
     <title>Mixtape</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.1.0/build/pure-min.css" integrity="sha384-kj0X2NG2KHBie8Tq8fH1kxnyWM9XsXQpq7XdwbKmFKjwwaXGKBlB2Klu3VOltSFx" crossorigin="anonymous">
     <link rel="stylesheet" href="{{ url_for('static', filename='header.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
 </head>
 <body>
     {% include "header.html" %}
     <h2>Browse mixtapes</h2>
-    <ul> 
-        <li>recent</li>
-        <li>popular</li>
-    </ul>
-    <ul>
-        <li>late-night</li>
-        <li>morning</li>
-        <li>pop</li>
-        <li>alternative</li>
-        <li>study</li>
-    </ul>
-
+    <div class="filters">
+        <ul> 
+            <li><button class="pure-button selected">recent</button></li>
+            <li><button class="pure-button">popular</button></li>
+        </ul>
+        <ul>
+            <li><button class="pure-button">late-night</button></li>
+            <li><button class="pure-button">morning</button></li>
+            <li><button class="pure-button">pop</button></li>
+            <li><button class="pure-button">alternative</button></li>
+            <li><button class="pure-button">study</button></li>
+        </ul>
+    </div>
 
     {% include "mixtape_template.html" %}
     <!-- {% for mixtape in mixtapes %}

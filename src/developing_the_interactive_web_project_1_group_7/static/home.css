@@ -1,0 +1,63 @@
+body {
+    background-color: rgb(35, 35, 35);
+    color: white;
+}
+
+h2 {
+    padding-left: 50px;
+}
+
+.filters {
+    display: flex;
+    gap: 100px;
+    padding-left: 50px;
+}
+
+.filters ul {
+    list-style: none;
+    display: flex;
+    gap: 10px;
+    padding: 0;
+}
+
+.filters .pure-button {
+    border-radius: 30px;
+    padding: 5px 15px;
+    background-color: white;
+    color: black;
+    font-weight: bold;
+}
+
+.filters .selected {
+    background-color: black;
+    color: white;
+}
+
+/* I like having the tags be different colors because 
+I think it would make navigating the website easier,
+/* But, that would require us to have a set list of tags
+
+/* late-night */
+.filters ul:nth-child(2) li:nth-child(1) .pure-button {
+    color: rgb(166, 0, 255);
+}
+
+/* morning */
+.filters ul:nth-child(2) li:nth-child(2) .pure-button {
+    color: rgb(0, 177, 212);
+}
+
+/* pop */
+.filters ul:nth-child(2) li:nth-child(3) .pure-button {
+    color: rgb(255, 0, 183);
+}
+
+/* alternative */
+.filters ul:nth-child(2) li:nth-child(4) .pure-button {
+    color: rgb(255, 136, 0);
+}
+
+/* study */
+.filters ul:nth-child(2) li:nth-child(5) .pure-button {
+    color: rgb(59, 183, 136);
+}
