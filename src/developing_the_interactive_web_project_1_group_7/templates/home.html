@@ -7,6 +7,25 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.1.0/build/pure-min.css" integrity="sha384-kj0X2NG2KHBie8Tq8fH1kxnyWM9XsXQpq7XdwbKmFKjwwaXGKBlB2Klu3VOltSFx" crossorigin="anonymous">
 </head>
 <body>
+    {% include "header.html" %}
+    <h2>Browse mixtapes</h2>
+    <ul> 
+        <li>recent</li>
+        <li>popular</li>
+    </ul>
+    <ul>
+        <li>late-night</li>
+        <li>morning</li>
+        <li>pop</li>
+        <li>alternative</li>
+        <li>study</li>
+    </ul>
+
+
+    {% include "mixtape_template.html" %}
+    <!-- {% for mixtape in mixtapes %}
+        {% include "mixtape_template.html" %}
+    {% endfor %} -->
 
 </body>
 
