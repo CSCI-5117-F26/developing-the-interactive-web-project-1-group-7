@@ -1,0 +1,20 @@
+header {
+    background-color: black;
+    padding: 15px 40px;
+    color: white;
+}
+
+nav {
+    align-items: center;
+}
+
+nav h1 {
+    font-size: 28px;
+    margin: 0;
+}
+
+nav input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 20px;
+}
