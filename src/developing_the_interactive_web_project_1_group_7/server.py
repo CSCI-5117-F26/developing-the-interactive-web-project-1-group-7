@@ -59,8 +59,9 @@ def get_access_token():
 def edit():
     return render_template("edit_mixtape.html")
 
-@app.route("/create")
-def create():
+# Fixing duplicate create route
+@app.route("/mixtape/new")
+def new_mixtape():
     return render_template("mixtape_template.html")
 
 @app.route("/view")
