@@ -15,6 +15,18 @@ app = Flask(__name__)
 def home():
     return render_template("home.html")
 
+@app.route("/login")
+def login():
+    return render_template("login.html")
+
+@app.route("/profile")
+def profile():
+    return render_template("profile.html")
+
+@app.route("/create")
+def create():
+    # temporary for now 
+    return redirect("/create/search")
 
 # I don't know if this would work, it's pieced together from multiple sources
 @app.route("/create/search", methods=["GET", "POST"])
@@ -47,9 +59,9 @@ def get_access_token():
 def edit():
     return render_template("edit_mixtape.html")
 
-@app.route("/create")
-def create():
-    return render_template("mixtape_template.html")
+# @app.route("/create")
+# def create():
+#     return render_template("mixtape_template.html")
 
 @app.route("/view")
 def view():
@@ -62,3 +74,7 @@ def guest():
 @app.route("/remix")
 def remix():
     return render_template("remix_mixtape.html")
+
+@app.route("/my-mixtape")
+def my_mixtape():
+    return render_template("my_mixtape.html")

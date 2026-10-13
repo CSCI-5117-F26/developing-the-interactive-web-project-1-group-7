@@ -1,4 +1,4 @@
-.song .pure-g {
+.song {
     align-items: center;
 }
 
@@ -28,7 +28,7 @@
     font-size: 15px;
 }
 
-.song .fa-ellipsis {
+.song .fa-ellipsis .fa-bars .fa-minus {
     font-size: 15px;
     cursor: pointer;
 }
