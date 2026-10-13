@@ -102,17 +102,14 @@ def profile():
 def home():
     return render_template("home.html")
 
-<<<<<<< HEAD
-@app.route("/login")
-def login():
-    return render_template("login.html")
+# @app.route("/login")
+# def login():
+#     return render_template("login.html")
 
-@app.route("/profile")
-def profile():
-    return render_template("profile.html")
+# @app.route("/profile")
+# def profile():
+#     return render_template("profile.html")
 
-=======
->>>>>>> 80303836c211d8bf0c413d19fb1b1aa3bfe18867
 @app.route("/create")
 def create():
     # temporary for now 
@@ -149,22 +146,14 @@ def get_access_token():
 def edit():
     return render_template("edit_mixtape.html")
 
-<<<<<<< HEAD
 # @app.route("/create")
 # def create():
 #     return render_template("mixtape_template.html")
-=======
-# Fixing duplicate create route
-@app.route("/mixtape/new")
-def new_mixtape():
-    return render_template("mixtape_template.html")
->>>>>>> 80303836c211d8bf0c413d19fb1b1aa3bfe18867
 
 @app.route("/view")
 def view():
     return render_template("view_mixtape.html")
 
-<<<<<<< HEAD
 @app.route("/guest")
 def guest():
     return render_template("guest_base.html")
@@ -176,7 +165,6 @@ def remix():
 @app.route("/my-mixtape")
 def my_mixtape():
     return render_template("my_mixtape.html")
-=======
 # @app.route("/guest")
 # def guest():
 #     return render_template("guest_base.html")
@@ -210,4 +198,3 @@ def demo_create():
         "demo_create.html",
         mixtapes=mixtapes
     )
->>>>>>> 80303836c211d8bf0c413d19fb1b1aa3bfe18867
