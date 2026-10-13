@@ -116,7 +116,6 @@ def create():
     # temporary for now 
     return redirect("/create/search")
 
-# I don't know if this would work, it's pieced together from multiple sources
 @app.route("/create/search", methods=["GET", "POST"])
 def track_search():
     if request.method=="POST":
@@ -127,7 +126,6 @@ def track_search():
         return response.json()
     return render_template("create.html")
 
-# Attempt to convert the javascript to python (leaving the javascript in case)
 def get_access_token():
     client_id = os.environ["SPOTIFY_CLIENT_ID"]
     client_secret = os.environ["SPOTIFY_CLIENT_SECRET"]
