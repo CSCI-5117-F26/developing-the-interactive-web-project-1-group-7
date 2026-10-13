@@ -102,9 +102,13 @@ def profile():
 def home():
     return render_template("home.html")
 
-@app.route("/profile")
-def profile():
-    return render_template("profile.html")
+# @app.route("/login")
+# def login():
+#     return render_template("login.html")
+
+# @app.route("/profile")
+# def profile():
+#     return render_template("profile.html")
 
 @app.route("/create")
 def create():
