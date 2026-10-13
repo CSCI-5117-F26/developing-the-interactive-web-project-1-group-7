@@ -1,0 +1,73 @@
+.card {
+    background-color: white;
+    border-radius: 15px;
+    height: 35vh;
+    width: 35vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.mixtape-title {
+    font-weight: 700;
+    font-size: 36px;
+    margin: 20px 0 10px 0;
+}
+
+.left-side {
+    box-sizing: border-box;
+    padding: 20px 0 20px 40px;
+}
+ 
+ 
+#mixtape-cover-img {
+    width: 85%;
+}
+ 
+.mixtape-desc {
+    font-size: 15px;
+    line-height: 1.3;
+    margin: 0 0 20px 0;
+}
+ 
+.left-side .pure-u-1-3 p {
+    margin: 0;
+    font-size: 15px;
+}
+ 
+.mixtape-owner {
+    font-size: 15px;
+    margin: 20px 0 25px 0;
+}
+ 
+.actions {
+    align-items: center;
+    margin-bottom: 15px;
+}
+ 
+#remix {
+    font-size: 15px;
+    color: #cccccc;
+}
+ 
+.actions i {
+    font-size: 15px;
+}
+ 
+#remix,
+#save,
+#like {
+    cursor: pointer;
+}
+ 
+#remix-source {
+    font-size: 15px;
+    letter-spacing: normal;
+    color: #cccccc;
+}
+ 
+
+.right-side {
+    box-sizing: border-box;
+    padding: 50px 80px 20px 120px;
+}
