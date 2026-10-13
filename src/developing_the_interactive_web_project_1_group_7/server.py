@@ -15,6 +15,18 @@ app = Flask(__name__)
 def home():
     return render_template("home.html")
 
+@app.route("/login")
+def login():
+    return render_template("login.html")
+
+@app.route("/profile")
+def profile():
+    return render_template("profile.html")
+
+@app.route("/create")
+def create():
+    # temporary for now 
+    return redirect("/create/search")
 
 # I don't know if this would work, it's pieced together from multiple sources
 @app.route("/create/search", methods=["GET", "POST"])
