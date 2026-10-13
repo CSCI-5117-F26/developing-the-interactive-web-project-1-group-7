@@ -58,3 +58,7 @@ def view():
 @app.route("/guest")
 def guest():
     return render_template("guest_base.html")
+
+@app.route("/remix")
+def remix():
+    return render_template("remix_mixtape.html")
