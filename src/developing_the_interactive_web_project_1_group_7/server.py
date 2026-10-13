@@ -1,3 +1,4 @@
+import base64
 import os
 
 from flask import Flask, redirect, request, render_template, session, url_for
@@ -121,8 +122,8 @@ def track_search():
     if request.method=="POST":
         access_token = get_access_token()
         headers={"Authorization": f"Bearer {access_token}"}
-        query = request.get.form["q"]
-        response = request.get(f"https://api.spotify.com/v1/search?q={query}&type=track", headers=headers)
+        query = request.form.get("q")
+        response = requests.get(f"https://api.spotify.com/v1/search?q={query}&type=track", headers=headers)
         return response.json()
     return render_template("create.html")
 
@@ -130,17 +131,20 @@ def track_search():
 def get_access_token():
     client_id = os.environ["SPOTIFY_CLIENT_ID"]
     client_secret = os.environ["SPOTIFY_CLIENT_SECRET"]
+    encoded = base64.b64encode(f"{client_id}:{client_secret}".encode("utf-8"))
     authOptions = {
         "url": 'https://accounts.spotify.com/api/token',
         "headers": {
-            'Authorization': f"Basic {client_id} : {client_secret}"
+            'Authorization': f"Basic {str(encoded, "utf-8")}",
+            'Content-Type': 'application/x-www-form-urlencoded'
         },
         "form": {
             "grant_type": 'client_credentials'
         }
     }
-    response = request.post(authOptions)
-    return response
+    response = requests.post(url=authOptions["url"], headers=authOptions["headers"], data=authOptions["form"])
+    print(response.text)
+    return response.json()["access_token"]
 
 @app.route("/edit")
 def edit():
