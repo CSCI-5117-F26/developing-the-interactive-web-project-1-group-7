@@ -55,3 +55,18 @@ def get_access_token():
     response = request.post(authOptions)
     return response
 
+@app.route("/edit")
+def edit():
+    return render_template("edit_mixtape.html")
+
+@app.route("/create")
+def create():
+    return render_template("mixtape_template.html")
+
+@app.route("/view")
+def view():
+    return render_template("view_mixtape.html")
+
+@app.route("/guest")
+def guest():
+    return render_template("guest_base.html")
