@@ -2,7 +2,7 @@ import os
 import psycopg
 
 
-db_url = os.environ("DATABASE_URL")
+db_url = os.environ["DATABASE_URL"]
 
 # Template code for a database interaction
     # with psycopg.connect(db_url) as conn:
