@@ -7,3 +7,15 @@ app = Flask(__name__)
 @app.route("/")
 def home():
     return render_template("home.html")
+
+@app.route("/edit")
+def edit():
+    return render_template("edit_mixtape.html")
+
+@app.route("/create")
+def create():
+    return render_template("mixtape_template.html")
+
+@app.route("/view")
+def view():
+    return render_template("view_mixtape.html")
