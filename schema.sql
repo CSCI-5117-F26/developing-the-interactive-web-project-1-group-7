@@ -1,0 +1,13 @@
+CREATE TABLE IF NOT EXISTS users (
+    auth0_id TEXT PRIMARY KEY,
+    name TEXT,
+    email TEXT
+);
+
+CREATE TABLE IF NOT EXISTS mixtapes (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    creator_id TEXT NOT NULL REFERENCES users(auth0_id),
+    title VARCHAR(150) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);

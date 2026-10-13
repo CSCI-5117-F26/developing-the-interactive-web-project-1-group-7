@@ -26,7 +26,7 @@ nav input {
     border-radius: 20px;
 }
 
-.add, .profile {
+.add {
     text-decoration: none;
     color: white;
     font-weight: bold;
@@ -41,4 +41,36 @@ h1 span:nth-child(2) {
 }
 h1 span:nth-child(3) {
     color: #FFBB00;
+}
+
+/* Added: Align navigation links to the right */
+header nav > div {
+    text-align: right;
+    white-space: nowrap;
+}
+
+/* Added: Sign up link */
+.signup {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    margin-left: 2em;
+}
+
+/* Added: Log In button */
+.login {
+    background-color: white;
+    color: black;
+    padding: 9px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    margin-left: 2em;
+}
+.profile {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    margin-left: 2em;
+    font-size: 25px;
 }
