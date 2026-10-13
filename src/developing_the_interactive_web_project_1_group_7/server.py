@@ -4,6 +4,7 @@ from flask import Flask, redirect, request, render_template, session, url_for
 from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
 import requests 
+from .db import save_user, create_mixtape, get_user_mixtapes
 
 load_dotenv()
 
@@ -31,13 +32,6 @@ oauth.register(
     client_kwargs={"scope": "openid profile email"},
 )
 
-
-# Added this so I could run my html easier, feel free to change anything this is just temp routing
-
-@app.route("/")
-def home():
-    return render_template("home.html")
-
 # Login
 @app.route("/login")
 def login():
@@ -50,8 +44,13 @@ def login():
 def callback():
     token = oauth.auth0.authorize_access_token()
 
+    user = dict(token["userinfo"])
+
+    # Save or update the user in PostgreSQL
+    save_user(user)
+
     session.clear()
-    session["user"] = dict(token["userinfo"])
+    session["user"] = user
 
     return redirect(url_for("home"))
 
@@ -96,6 +95,12 @@ def profile():
 # @app.route("/profile")
 # def profile():
 #     return render_template("profile.html")
+
+# Added this so I could run my html easier, feel free to change anything this is just temp routing
+
+@app.route("/")
+def home():
+    return render_template("home.html")
 
 @app.route("/create")
 def create():
@@ -142,6 +147,36 @@ def new_mixtape():
 def view():
     return render_template("view_mixtape.html")
 
-@app.route("/guest")
-def guest():
-    return render_template("guest_base.html")
+# @app.route("/guest")
+# def guest():
+#     return render_template("guest_base.html")
+
+# Temp create mixtape to test db
+@app.route("/demo/create", methods=["GET", "POST"])
+def demo_create():
+    user = session.get("user")
+
+    if not user:
+        return redirect(url_for("login"))
+
+    if request.method == "POST":
+        title = request.form.get("title", "").strip()
+        description = request.form.get("description", "").strip()
+
+        if not title or len(title) > 150:
+            return "Title must be between 1 and 150 characters.", 400
+
+        mixtape_id = create_mixtape(
+            user["sub"],
+            title,
+            description
+        )
+
+        return redirect(url_for("demo_create"))
+
+    mixtapes = get_user_mixtapes(user["sub"])
+
+    return render_template(
+        "demo_create.html",
+        mixtapes=mixtapes
+    )
