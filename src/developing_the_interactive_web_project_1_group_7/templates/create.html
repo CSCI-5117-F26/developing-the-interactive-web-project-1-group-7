@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Create Mixtape{% endblock %}
+{% block content %} 
+
+<!--Other stuff will be added to this page later I just needed something for testing-->
+<div class="pure-g">
+    <div class="pure-u-1-1" style="justify-content: center; display: flex; padding:20%">
+        <form class="pure-form" action="{{ url_for('track_search') }}" method="POST" name="search">
+            <input id="q" name="q" type="text" required=""/>
+            <button type="submit" class="pure-button pure-button-primary">Search</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
