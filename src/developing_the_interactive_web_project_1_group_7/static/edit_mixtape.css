@@ -72,7 +72,6 @@
     padding: 50px 80px 20px 120px;
 }
 
-/* Modal container - hidden by default */
 .modal {
     position: fixed;
     top: 0;

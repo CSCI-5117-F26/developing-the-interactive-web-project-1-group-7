@@ -6,6 +6,7 @@ from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
 import requests 
 from .db import save_user, create_mixtape, get_user_mixtapes
+from functools import wraps
 
 load_dotenv()
 
@@ -32,6 +33,15 @@ oauth.register(
     ),
     client_kwargs={"scope": "openid profile email"},
 )
+
+def requires_auth(f):
+  @wraps(f)
+  def decorated(*args, **kwargs):
+    if session.get("user") not in session:
+      return redirect('/login')
+    return f(*args, **kwargs) #do the normal behavior -- return as it does.
+
+  return decorated
 
 # Login
 @app.route("/login")
@@ -161,6 +171,7 @@ def guest():
     return render_template("guest_base.html")
 
 @app.route("/remix")
+@requires_auth 
 def remix():
     return render_template("remix_mixtape.html")
 
