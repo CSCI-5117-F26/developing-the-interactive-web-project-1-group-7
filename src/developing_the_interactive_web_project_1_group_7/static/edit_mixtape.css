@@ -71,3 +71,51 @@
     box-sizing: border-box;
     padding: 50px 80px 20px 120px;
 }
+
+/* Modal container - hidden by default */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    
+    /* Center the modal content */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+}
+
+/* When the modal is targeted via URL hash, make it visible */
+.modal:target {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Modal content box */
+.modal-content {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 6px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 5px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Backdrop close link - covers the entire screen */
+.modal-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    cursor: default;
+    z-index: -1; /* Place behind modal content */
+}
