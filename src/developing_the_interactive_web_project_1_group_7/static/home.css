@@ -9,9 +9,10 @@ h2 {
 
 .filters {
     display: flex;
-    gap: 30px;
     padding-left: 50px;
     flex-wrap: wrap;
+    column-gap: 50px;
+    row-gap: 15px;
 }
 
 .filters ul {
@@ -20,6 +21,7 @@ h2 {
     gap: 10px;
     padding: 0;
     flex-wrap: wrap;
+    margin: 0;
 }
 
 .filters .pure-button {
@@ -49,17 +51,52 @@ I think it would make navigating the website easier,
     color: rgb(0, 177, 212);
 }
 
-/* pop */
+/* sleepy */
 .filters ul:nth-child(2) li:nth-child(3) .pure-button {
+    color: rgb(150, 120, 220);
+}
+
+/* chill */
+.filters ul:nth-child(2) li:nth-child(4) .pure-button {
+    color: rgb(50, 130, 255);
+}
+
+/* pop */
+.filters ul:nth-child(2) li:nth-child(5) .pure-button {
     color: rgb(255, 0, 183);
 }
 
 /* alternative */
-.filters ul:nth-child(2) li:nth-child(4) .pure-button {
+.filters ul:nth-child(2) li:nth-child(6) .pure-button {
     color: rgb(255, 136, 0);
 }
 
+/* heartbreak */
+.filters ul:nth-child(2) li:nth-child(7) .pure-button {
+    color: rgb(185, 0, 0);
+}
+
 /* study */
-.filters ul:nth-child(2) li:nth-child(5) .pure-button {
+.filters ul:nth-child(2) li:nth-child(8) .pure-button {
     color: rgb(59, 183, 136);
+}
+
+/* driving */
+.filters ul:nth-child(2) li:nth-child(9) .pure-button {
+    color: rgb(42, 167, 167);
+}
+
+/* workout */
+.filters ul:nth-child(2) li:nth-child(10) .pure-button {
+    color: rgb(220, 171, 35);
+}
+
+/* party */
+.filters ul:nth-child(2) li:nth-child(11) .pure-button {
+    color: rgb(200, 50, 220);
+}
+
+/* getting-ready */
+.filters ul:nth-child(2) li:nth-child(12) .pure-button {
+    color: rgb(255, 125, 192);
 }

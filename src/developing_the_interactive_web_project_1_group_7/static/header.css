@@ -9,10 +9,15 @@ header {
     background-color: black;
     padding: 15px 40px;
     color: white;
+    position: sticky;
+    top: 0;
 }
 
 nav {
     align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 15px;
 }
 
 nav h1 {
