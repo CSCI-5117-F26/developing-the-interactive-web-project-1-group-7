@@ -211,3 +211,8 @@ def demo_create():
         "demo_create.html",
         mixtapes=mixtapes
     )
+
+# Temp so I can view profile.html easier
+@app.route("/profile-test")
+def profile_preview():
+    return render_template("profile.html")
