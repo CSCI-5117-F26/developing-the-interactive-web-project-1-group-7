@@ -98,14 +98,12 @@ def profile():
     if not user:
         return redirect(url_for("login"))
 
-    return f"""
-        <h2>Welcome, {user.get('name', 'User')}!</h2>
-        <p>You are successfully logged in</p>
-        <a href="/logout">Logout</a>
-    """
-# @app.route("/profile")
-# def profile():
-#     return render_template("profile.html")
+    # return f"""
+    #     <h2>Welcome, {user.get('name', 'User')}!</h2>
+    #     <p>You are successfully logged in</p>
+    #     <a href="/logout">Logout</a>
+    # """
+    return render_template("profile.html", name=user.get("name", "User"),)
 
 # Added this so I could run my html easier, feel free to change anything this is just temp routing
 
