@@ -9,9 +9,12 @@
     <i class="fa-solid fa-circle-user"></i>
 
     <div>
-        <h2>{{ name }}</h2>
-        <button class="pure-button">Edit Profile</button>
-        <button class="pure-button">Settings</button>
+        <h2>Jane Doe</h2>
+        <!-- <button class="pure-button">Logout</button> -->
+        <a href="{{ url_for('logout') }}" class="pure-button">
+            Logout
+        </a>
+        <!-- <button class="pure-button">Settings</button> -->
     </div>
 </div>
 
