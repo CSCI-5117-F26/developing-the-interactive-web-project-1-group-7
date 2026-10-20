@@ -1,13 +1,97 @@
 {% extends "base.html" %}
 
-{% block title %}View Mixtape{% endblock %}
+{% block title %}Add Mixtape{% endblock %}
 
 {% block content %}
 
+<link rel="stylesheet" href="{{ url_for('static', filename='profile.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='edit_mixtape.css') }}">
 
 <section>
 
+<form class="pure-form" id="mixtape-form" method="POST" action="{{ url_for('create') }}">
+
+    <div class="profile-info">
+        <div class="card" id="mixtape-cover">
+            <img id="mixtape-cover-img" src="/static/images/mixtape-cover.png" alt="mixtape cover" width="200">
+        </div>
+
+        <div>
+            <input type="text" name="title" class="mixtape-title-2" placeholder="Mixtape Title" maxlength="150" required>
+
+            <div class="actions">
+                <p class="mixtape-owner">{{ name }}</p>
+                <select name="visibility">
+                    <option value="public">Public</option>
+                    <option value="private">Private</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="filters">
+        <ul>
+            <li><button type="button" class="pure-button" command="show-modal" commandfor="add-description"><i class="fa-regular fa-pen-to-square"></i> Add Description</button></li>
+            <li><button type="button" class="pure-button" command="show-modal" commandfor="add-tag"><i class="fa-solid fa-plus"></i> Add tag</button></li>
+        </ul>
+    </div>
+
+    <dialog id="add-description">
+        <h4>Add a description</h4>
+        <textarea name="description" class="pure-input-1" rows="4" placeholder="What's this mixtape about?"></textarea>
+        <div class="dialog-buttons">
+            <button type="button" class="pure-button" commandfor="add-description" command="close">Done</button>
+        </div>
+    </dialog>
+
+    <dialog id="add-tag">
+        <h4>Add tags</h4>
+        {% for tag in ["late-night", "morning", "sleepy", "chill", "pop", "alternative", "heartbreak", "study", "driving", "workout", "party", "getting-ready"] %}
+        <label for="tag-{{ tag }}" class="pure-checkbox">
+            <input id="tag-{{ tag }}" type="checkbox" name="tags" value="{{ tag }}"> {{ tag }}
+        </label>
+        {% endfor %}
+        <div class="dialog-buttons">
+            <button type="button" class="pure-button" commandfor="add-tag" command="close">Done</button>
+        </div>
+    </dialog>
+
+    <div style="padding: 20px 50px;">
+        {% include "./components/songs_edit.html" %}
+    </div>
+
+</form>
+
+<h2>Find the songs from Spotify</h2>
+
+<div style="padding: 0 50px;">
+    <div class="pure-form" id="search-form">
+        <input id="q" name="q" type="text" class="pure-input-1-2 pure-input-rounded" placeholder="Search song...">
+        <button type="button" class="pure-button login">Search</button>
+    </div>
+
+    {% for i in range(2) %}
+    <div class="pure-g song">
+        <div class="pure-u-4-24">
+            <img class="song-img" src="" alt="Song's Cover Image">
+        </div>
+        <div class="pure-u-16-24">
+            <h5>Song Title</h5>
+            <div class="song-meta">
+                <p>Artist</p>
+                <p>Album</p>
+            </div>
+        </div>
+        <div class="pure-u-4-24">
+            <button type="button" class="pure-button login">Add</button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div style="text-align: right; padding: 20px 50px;">
+    <button type="submit" form="mixtape-form" class="pure-button login">Save</button>
+</div>
 
 </section>
 

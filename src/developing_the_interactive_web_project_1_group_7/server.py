@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 import requests 
 from .db import save_user, create_mixtape, get_user_mixtapes
 from functools import wraps
+# from werkzeug import secure_filename
 
 load_dotenv()
 
@@ -20,7 +21,6 @@ app.config.update(
     SESSION_COOKIE_SAMESITE="Lax",
     SESSION_COOKIE_SECURE=os.environ.get("RENDER") == "true",
 )
-
 oauth = OAuth(app)
 
 oauth.register(
@@ -37,7 +37,9 @@ oauth.register(
 def requires_auth(f):
   @wraps(f)
   def decorated(*args, **kwargs):
-    if session.get("user") not in session:
+    # fixing this line cause it's error
+    # if session.get("user") not in session:
+    if "user" not in session:
       return redirect('/login')
     return f(*args, **kwargs) #do the normal behavior -- return as it does.
 
@@ -160,13 +162,13 @@ def edit():
 # def create():
 #     return render_template("mixtape_template.html")
 
+@app.route("/add")
+def add():
+    return render_template("add_mixtape.html")
+
 @app.route("/view")
 def view():
     return render_template("view_mixtape.html")
-
-@app.route("/guest")
-def guest():
-    return render_template("guest_base.html")
 
 @app.route("/remix")
 @requires_auth 
@@ -176,9 +178,6 @@ def remix():
 @app.route("/my-mixtape")
 def my_mixtape():
     return render_template("my_mixtape.html")
-# @app.route("/guest")
-# def guest():
-#     return render_template("guest_base.html")
 
 # Temp create mixtape to test db
 @app.route("/demo/create", methods=["GET", "POST"])
