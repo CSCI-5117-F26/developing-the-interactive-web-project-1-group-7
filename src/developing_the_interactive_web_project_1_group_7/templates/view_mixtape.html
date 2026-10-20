@@ -33,6 +33,20 @@
         </div>
         <p class="mixtape-owner" id="mixtape-owner">By Jane Doe</p>
         
+        {% if session.get("user") %}
+        <div class="actions pure-g">
+            <div class="pure-u-16-24">
+                <div id="remix" class="remix-button"><a href="{{ url_for('remix') }}" style="color: black; text-decoration: none;"><i class="fa-solid fa-compact-disc"></i><span style="margin-left: 10px;">Remix</span></a></div>
+            </div>
+            <div class="pure-u-1-24"></div>
+            <div class="pure-u-1-24">
+                <div id="save" class="save "><i class="fa-regular fa-bookmark"></i></div>
+            </div>
+            <div class="pure-u-1-24">
+                <div id="like" class="like "><i class="fa-regular fa-heart"></i></div>
+            </div>
+        </div>
+        {% endif %}
         
         <div class="pure-g">
             <i class="fa-solid fa-code-branch"></i> <span id="remix-source" style="margin-left: 15px;">Remixed from "Playlist 2" by John Doe</span>

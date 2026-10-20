@@ -36,6 +36,10 @@ nav input {
     color: white;
     font-weight: bold;
     margin-left: 2em;
+    background-color: white;
+    color: black;
+    padding: 9px 20px;
+    border-radius: 999px;
 }
 
 h1 span:nth-child(1) {
