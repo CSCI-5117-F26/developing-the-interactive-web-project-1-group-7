@@ -1,5 +1,5 @@
 import base64
-import os
+import os, psycopg
 
 from flask import Flask, redirect, request, render_template, session, url_for
 from authlib.integrations.flask_client import OAuth
@@ -181,6 +181,7 @@ def my_mixtape():
 
 # Temp create mixtape to test db
 @app.route("/demo/create", methods=["GET", "POST"])
+@requires_auth
 def demo_create():
     user = session.get("user")
 
@@ -200,16 +201,49 @@ def demo_create():
             description
         )
 
-        return redirect(url_for("demo_create"))
+        # return redirect(url_for("demo_create"))
+        return redirect(url_for("profile"))
 
     mixtapes = get_user_mixtapes(user["sub"])
 
     return render_template(
-        "demo_create.html",
-        mixtapes=mixtapes
+    "add_mixtape.html",
+    mixtapes=mixtapes
     )
 
+    # return render_template(
+    #     "demo_create.html",
+    #     mixtapes=mixtapes
+    # )
+    
 # Temp so I can view profile.html easier
 @app.route("/profile-test")
 def profile_preview():
     return render_template("profile.html")
+
+def save_mixtape(user_id, mixtape_id):
+    conn = psycopg.connect(DATABASE_URL)
+    cur = conn.cursor()
+    cur.execute("INSERT INTO saved_mixtapes (user_id, mixtape_id) VALUES (%s, %s) ON CONFLICT DO NOTHING", (user_id, mixtape_id))
+    conn.commit()
+    app.logger.info("mixtape saved")
+    cur.close()
+    conn.close()
+
+def unsave_mixtape(user_id, mixtape_id):
+    conn = psycopg.connect(DATABASE_URL)
+    cur = conn.cursor()
+    cur.execute("DELETE FROM saved_mixtapes WHERE user_id = %s AND mixtape_id = %s", (user_id, mixtape_id))
+    conn.commit()
+    app.logger.info("mixtape deleted")
+    cur.close()
+    conn.close()
+
+def get_saved_mixtapes(user_id):
+    conn = psycopg.connect(DATABASE_URL)
+    cur = conn.cursor()
+    cur.execute("SELECT mixtapes.id, mixtapes.title, mixtapes.description, mixtapes.created_at FROM saved_mixtapes JOIN mixtapes ON mixtapes.id = saved_mixtapes.mixtape_id WHERE saved_mixtapes.user_id = %s ORDER BY saved_mixtapes.saved_at DESC", (user_id,))
+    rows = cur.fetchall()
+    cur.close()
+    conn.close()
+    return rows

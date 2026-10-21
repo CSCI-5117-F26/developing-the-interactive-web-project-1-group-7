@@ -21,19 +21,15 @@
 
             <div class="actions">
                 <p class="mixtape-owner">{{ name }}</p>
-                <select name="visibility">
-                    <option value="public">Public</option>
-                    <option value="private">Private</option>
-                </select>
+
+            <div class="filters">
+                <ul>
+                    <li><button type="button" class="pure-button" command="show-modal" commandfor="add-description"><i class="fa-regular fa-pen-to-square"></i> Add Description</button></li>
+                    <li><button type="button" class="pure-button" command="show-modal" commandfor="add-tag"><i class="fa-solid fa-plus"></i> Add tag</button></li>
+                </ul>
+            </div>
             </div>
         </div>
-    </div>
-
-    <div class="filters">
-        <ul>
-            <li><button type="button" class="pure-button" command="show-modal" commandfor="add-description"><i class="fa-regular fa-pen-to-square"></i> Add Description</button></li>
-            <li><button type="button" class="pure-button" command="show-modal" commandfor="add-tag"><i class="fa-solid fa-plus"></i> Add tag</button></li>
-        </ul>
     </div>
 
     <dialog id="add-description">
@@ -56,9 +52,13 @@
         </div>
     </dialog>
 
+    {% if songs %}
     <div style="padding: 20px 50px;">
-        {% include "./components/songs_edit.html" %}
+        {% for song in songs %}
+            {% include "./components/songs_edit.html" %}
+        {% endfor %}
     </div>
+    {% endif %}
 
 </form>
 
