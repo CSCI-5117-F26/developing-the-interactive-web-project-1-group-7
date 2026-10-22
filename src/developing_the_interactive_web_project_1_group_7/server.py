@@ -144,8 +144,9 @@ def track_search():
         headers={"Authorization": f"Bearer {access_token}"}
         query = request.form.get("q")
         response = requests.get(f"https://api.spotify.com/v1/search?q={query}&type=track", headers=headers)
-        return response.json()
-    return render_template("create.html")
+        results = response.json()
+        return render_template("add_mixtape.html", results=results)
+    return render_template("add_mixtape.html")
 
 def get_access_token():
     client_id = os.environ["SPOTIFY_CLIENT_ID"]
@@ -162,7 +163,6 @@ def get_access_token():
         }
     }
     response = requests.post(url=authOptions["url"], headers=authOptions["headers"], data=authOptions["form"])
-    print(response.text)
     return response.json()["access_token"]
 
 @app.route("/edit")
