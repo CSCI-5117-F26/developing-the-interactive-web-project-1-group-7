@@ -65,10 +65,10 @@
 <h2>Find the songs from Spotify</h2>
 
 <div style="padding: 0 50px;">
-    <div class="pure-form" id="search-form">
-        <input id="q" name="q" type="text" class="pure-input-1-2 pure-input-rounded" placeholder="Search song...">
-        <button type="button" class="pure-button login">Search</button>
-    </div>
+    <form class="pure-form" action="{{ url_for('track_search') }}" method="POST" name="search">
+        <input id="q" name="q" type="text" required="" placeholder="Search song..."/>
+        <button type="submit" class="pure-button login">Search</button>
+    </form>
 
     {% for i in range(2) %}
     <div class="pure-g song">
