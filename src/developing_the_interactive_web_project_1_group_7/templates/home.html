@@ -10,12 +10,14 @@
         <ul> 
             <!-- <li><button class="pure-button selected">recent</button></li> -->
             <!-- <li><button class="pure-button">popular</button></li> -->
-            {% if selected_tag %}
+            {% for tag in selected_tags %}
             <li>
-                <a href="{{ url_for('home', tag=selected_tag) }}" class="pure-button tag-{{ selected_tag }} selected">
-                    {{ selected_tag }}
+                <a href="{{ url_for('home', tag=selected_tags | reject('equalto', tag) | list) }}" class="pure-button tag-{{ tag }} selected">
+                    {{ tag }} <i class="fa-solid fa-xmark"></i>
                 </a>
             </li>
+            {% endfor %}
+            {% if selected_tags %}
             <li>
                 <a href="{{ url_for('home') }}" class="pure-button clear-filter">
                     <i class="fa-solid fa-xmark"></i> Clear filters
@@ -25,9 +27,9 @@
         </ul>
         <ul>
             {% for tag in mixtape_tags %}
-                {% if tag != selected_tag %}
+                {% if tag not in selected_tags %}
                     <li>
-                        <a href="{{ url_for('home', tag=tag) }}" class="pure-button tag-{{ tag }}"> {{ tag }}
+                        <a href="{{ url_for('home', tag=selected_tags + [tag]) }}" class="pure-button tag-{{ tag }}"> {{ tag }}
                         </a>
                     </li>
                 {% endif %}

@@ -116,12 +116,13 @@ def profile():
 
 @app.route("/")
 def home():
-    selected_tag = request.args.get("tag")
+    selected_tags = request.args.getlist("tag")
 
-    if selected_tag not in MIXTAPE_TAGS:
-        selected_tag = None
+    selected_tags = [
+        tag for tag in selected_tags if tag in MIXTAPE_TAGS
+    ]
 
-    return render_template("home.html", mixtape_tags=MIXTAPE_TAGS, selected_tag=selected_tag)
+    return render_template("home.html", mixtape_tags=MIXTAPE_TAGS, selected_tags=selected_tags)
 
 # @app.route("/login")
 # def login():
