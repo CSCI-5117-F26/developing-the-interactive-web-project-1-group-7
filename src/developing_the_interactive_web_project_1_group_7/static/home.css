@@ -13,6 +13,7 @@ h2 {
     flex-wrap: wrap;
     row-gap: 15px;
     padding-bottom: 20px;
+    column-gap: 25px;
 }
 
 .filters ul {
@@ -32,7 +33,12 @@ h2 {
 }
 
 .filters .selected {
-    background-color: black;
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+}
+
+.filters .clear-filter {
+    background-color: #717171;
     color: white;
 }
 
@@ -41,61 +47,61 @@ I think it would make navigating the website easier,
 /* But, that would require us to have a set list of tags
 
 /* late-night */
-.filters ul:nth-child(2) li:nth-child(1) .pure-button {
+.filters .tag-late-night {
     color: rgb(166, 0, 255);
 }
 
 /* morning */
-.filters ul:nth-child(2) li:nth-child(2) .pure-button {
+.filters .tag-morning {
     color: rgb(0, 177, 212);
 }
 
 /* sleepy */
-.filters ul:nth-child(2) li:nth-child(3) .pure-button {
+.filters .tag-sleepy {
     color: rgb(150, 120, 220);
 }
 
 /* chill */
-.filters ul:nth-child(2) li:nth-child(4) .pure-button {
+.filters .tag-chill {
     color: rgb(50, 130, 255);
 }
 
 /* pop */
-.filters ul:nth-child(2) li:nth-child(5) .pure-button {
+.filters .tag-pop{
     color: rgb(255, 0, 183);
 }
 
 /* alternative */
-.filters ul:nth-child(2) li:nth-child(6) .pure-button {
+.filters .tag-alternative {
     color: rgb(255, 136, 0);
 }
 
 /* heartbreak */
-.filters ul:nth-child(2) li:nth-child(7) .pure-button {
+.filters .tag-heartbreak {
     color: rgb(185, 0, 0);
 }
 
 /* study */
-.filters ul:nth-child(2) li:nth-child(8) .pure-button {
+.filters .tag-study {
     color: rgb(59, 183, 136);
 }
 
 /* driving */
-.filters ul:nth-child(2) li:nth-child(9) .pure-button {
+.filters .tag-driving {
     color: rgb(42, 167, 167);
 }
 
 /* workout */
-.filters ul:nth-child(2) li:nth-child(10) .pure-button {
+.filters .tag-workout {
     color: rgb(220, 171, 35);
 }
 
 /* party */
-.filters ul:nth-child(2) li:nth-child(11) .pure-button {
+.filters .tag-party {
     color: rgb(200, 50, 220);
 }
 
 /* getting-ready */
-.filters ul:nth-child(2) li:nth-child(12) .pure-button {
+.filters .tag-getting-ready {
     color: rgb(255, 125, 192);
 }

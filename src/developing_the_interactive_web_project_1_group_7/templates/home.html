@@ -10,26 +10,43 @@
         <ul> 
             <!-- <li><button class="pure-button selected">recent</button></li> -->
             <!-- <li><button class="pure-button">popular</button></li> -->
+            {% if selected_tag %}
+            <li>
+                <a href="{{ url_for('home', tag=selected_tag) }}" class="pure-button tag-{{ selected_tag }} selected">
+                    {{ selected_tag }}
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('home') }}" class="pure-button clear-filter">
+                    <i class="fa-solid fa-xmark"></i> Clear filters
+                </a>
+            </li>
+            {% endif %}
         </ul>
         <ul>
-            <li><button class="pure-button">late-night</button></li>
-            <li><button class="pure-button">morning</button></li>
-            <li><button class="pure-button">sleepy</button></li>
-            <li><button class="pure-button">chill</button></li>
-            <li><button class="pure-button">pop</button></li>
-            <li><button class="pure-button">alternative</button></li>
-            <li><button class="pure-button">heartbreak</button></li>
-            <li><button class="pure-button">study</button></li>
-            <li><button class="pure-button">driving</button></li>
-            <li><button class="pure-button">workout</button></li>
-            <li><button class="pure-button">party</button></li>
-            <li><button class="pure-button">getting-ready</button></li>
+            {% for tag in mixtape_tags %}
+                {% if tag != selected_tag %}
+                    <li>
+                        <a href="{{ url_for('home', tag=tag) }}" class="pure-button tag-{{ tag }}"> {{ tag }}
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
         </ul>
     </div>
 
     <div class="mixtapes">
         <div class="pure-g">
-            <!-- In the future we can change so its i in range(#), I just chose 9 as filler for now-->
+            <!-- Spotify API integration: -->
+            <!--
+            {% for mixtape in mixtapes %}
+                <div class="pure-u-1 pure-u-md-1-2 pure-u-lg-1-4">
+                    {% include "mixtape_template.html" %}
+                </div>
+            {% else %}
+                <p>No mixtapes found.</p>
+            {% endfor %} 
+            -->
             {% for i in range(16) %}
                 <div class="pure-u-1 pure-u-md-1-2 pure-u-lg-1-4">
                     {% include "mixtape_template.html" %}

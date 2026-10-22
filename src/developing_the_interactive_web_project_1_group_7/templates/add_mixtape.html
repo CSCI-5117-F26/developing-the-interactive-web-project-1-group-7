@@ -42,7 +42,7 @@
 
     <dialog id="add-tag">
         <h4>Add tags</h4>
-        {% for tag in ["late-night", "morning", "sleepy", "chill", "pop", "alternative", "heartbreak", "study", "driving", "workout", "party", "getting-ready"] %}
+        {% for tag in mixtape_tags %}
         <label for="tag-{{ tag }}" class="pure-checkbox">
             <input id="tag-{{ tag }}" type="checkbox" name="tags" value="{{ tag }}"> {{ tag }}
         </label>

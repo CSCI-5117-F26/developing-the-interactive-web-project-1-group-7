@@ -13,6 +13,10 @@ load_dotenv()
 
 
 app = Flask(__name__)
+
+# Filter tags
+MIXTAPE_TAGS = ["late-night", "morning", "sleepy", "chill", "pop", "alternative", "heartbreak", "study", "driving", "workout", "party", "getting-ready"]
+
 #Auth0
 app.secret_key = os.environ["FLASK_SECRET_KEY"]
 DATABASE_URL = os.environ["DATABASE_URL"]
@@ -112,7 +116,12 @@ def profile():
 
 @app.route("/")
 def home():
-    return render_template("home.html")
+    selected_tag = request.args.get("tag")
+
+    if selected_tag not in MIXTAPE_TAGS:
+        selected_tag = None
+
+    return render_template("home.html", mixtape_tags=MIXTAPE_TAGS, selected_tag=selected_tag)
 
 # @app.route("/login")
 # def login():
@@ -165,7 +174,7 @@ def edit():
 
 @app.route("/add")
 def add():
-    return render_template("add_mixtape.html")
+    return render_template("add_mixtape.html", mixtape_tags=MIXTAPE_TAGS)
 
 @app.route("/view", defaults={"mixtape_id": None})
 @app.route("/view/<int:mixtape_id>")
