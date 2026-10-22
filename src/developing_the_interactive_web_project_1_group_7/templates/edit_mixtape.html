@@ -45,12 +45,13 @@
             </div>
         </div>
     </div>
-    <div class="pure-u-3-4 right-side">
+    <div class="pure-u-3-4 right-side" id="sortable">
         <!-- {% for song in songs %} 
         {% endfor %} -->
-
+        
+        <!-- Here is the resource I used for drag and drop: https://themesbrand.com/velzon/docs/flask/sortablejs.html-->
         {% for i in range(9) %}
-            <div>
+            <div class="sortable">
                 {% include "./components/songs.html" %}
             </div>
         {% endfor %}
@@ -84,5 +85,14 @@
 </div>
 
 </section>
+
+<!-- sortablejs -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
+
+<script>
+    new Sortable(document.getElementById("sortable"), {
+        animation: 150
+    });
+</script>
 
 {% endblock %}
