@@ -122,12 +122,8 @@ def home():
 # def profile():
 #     return render_template("profile.html")
 
-@app.route("/create")
-def create():
-    # temporary for now 
-    return redirect("/create/search")
 
-@app.route("/create/search", methods=["GET", "POST"])
+@app.route("/add/search", methods=["GET", "POST"])
 def track_search():
     if request.method=="POST":
         access_token = get_access_token()
@@ -135,7 +131,7 @@ def track_search():
         query = request.form.get("q")
         response = requests.get(f"https://api.spotify.com/v1/search?q={query}&type=track", headers=headers)
         return response.json()
-    return render_template("create.html")
+    return render_template("add_mixtape.html")
 
 def get_access_token():
     client_id = os.environ["SPOTIFY_CLIENT_ID"]
