@@ -5,7 +5,7 @@ from flask import Flask, redirect, request, render_template, session, url_for
 from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
 import requests 
-from .db import save_user, create_mixtape, get_user_mixtapes
+from .db import save_user, create_mixtape, get_user_mixtapes, save_mixtape, unsave_mixtape, get_saved_mixtapes
 from functools import wraps
 # from werkzeug import secure_filename
 
@@ -15,6 +15,7 @@ load_dotenv()
 app = Flask(__name__)
 #Auth0
 app.secret_key = os.environ["FLASK_SECRET_KEY"]
+DATABASE_URL = os.environ["DATABASE_URL"]
 
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
@@ -166,9 +167,19 @@ def edit():
 def add():
     return render_template("add_mixtape.html")
 
-@app.route("/view")
-def view():
-    return render_template("view_mixtape.html")
+@app.route("/view", defaults={"mixtape_id": None})
+@app.route("/view/<int:mixtape_id>")
+def view(mixtape_id):
+    user = session.get("user")
+
+    # check if the mixtape alr saved (filled or empty)
+    saved = False
+    if user and mixtape_id:
+        for saved_mixtape in get_saved_mixtapes(user["sub"]):
+            if saved_mixtape[0] == mixtape_id:
+                saved = True
+
+    return render_template("view_mixtape.html", mixtape_id=mixtape_id, saved=saved)
 
 @app.route("/remix")
 @requires_auth 
@@ -221,29 +232,20 @@ def demo_create():
 def profile_preview():
     return render_template("profile.html")
 
-def save_mixtape(user_id, mixtape_id):
-    conn = psycopg.connect(DATABASE_URL)
-    cur = conn.cursor()
-    cur.execute("INSERT INTO saved_mixtapes (user_id, mixtape_id) VALUES (%s, %s) ON CONFLICT DO NOTHING", (user_id, mixtape_id))
-    conn.commit()
+@app.route("/mixtape/<int:mixtape_id>/save", methods=["POST"])
+@requires_auth
+def save(mixtape_id):
+    user = session.get("user")
+
+    save_mixtape(user["sub"], mixtape_id)
     app.logger.info("mixtape saved")
-    cur.close()
-    conn.close()
+    return {"saved": True}
 
-def unsave_mixtape(user_id, mixtape_id):
-    conn = psycopg.connect(DATABASE_URL)
-    cur = conn.cursor()
-    cur.execute("DELETE FROM saved_mixtapes WHERE user_id = %s AND mixtape_id = %s", (user_id, mixtape_id))
-    conn.commit()
-    app.logger.info("mixtape deleted")
-    cur.close()
-    conn.close()
+@app.route("/mixtape/<int:mixtape_id>/unsave", methods=["POST"])
+@requires_auth
+def unsave(mixtape_id):
+    user = session.get("user")
 
-def get_saved_mixtapes(user_id):
-    conn = psycopg.connect(DATABASE_URL)
-    cur = conn.cursor()
-    cur.execute("SELECT mixtapes.id, mixtapes.title, mixtapes.description, mixtapes.created_at FROM saved_mixtapes JOIN mixtapes ON mixtapes.id = saved_mixtapes.mixtape_id WHERE saved_mixtapes.user_id = %s ORDER BY saved_mixtapes.saved_at DESC", (user_id,))
-    rows = cur.fetchall()
-    cur.close()
-    conn.close()
-    return rows
+    unsave_mixtape(user["sub"], mixtape_id)
+    app.logger.info("mixtape unsaved")
+    return {"saved": False}

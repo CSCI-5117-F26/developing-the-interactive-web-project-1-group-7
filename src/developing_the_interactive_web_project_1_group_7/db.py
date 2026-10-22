@@ -62,6 +62,31 @@ def get_user_mixtapes(user_id):
 
             return cur.fetchall()
 
+def save_mixtape(user_id, mixtape_id):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("INSERT INTO saved_mixtapes (user_id, mixtape_id) VALUES (%s, %s) ON CONFLICT DO NOTHING", (user_id, mixtape_id))
+    conn.commit()
+    cur.close()
+    conn.close()
+
+def unsave_mixtape(user_id, mixtape_id):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("DELETE FROM saved_mixtapes WHERE user_id = %s AND mixtape_id = %s", (user_id, mixtape_id))
+    conn.commit()
+    cur.close()
+    conn.close()
+
+def get_saved_mixtapes(user_id):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT mixtapes.id, mixtapes.title, mixtapes.description, mixtapes.created_at FROM saved_mixtapes JOIN mixtapes ON mixtapes.id = saved_mixtapes.mixtape_id WHERE saved_mixtapes.user_id = %s ORDER BY saved_mixtapes.saved_at DESC", (user_id,))
+    rows = cur.fetchall()
+    cur.close()
+    conn.close()
+    return rows
+
 if __name__ == "__main__":
     with get_db_connection() as conn:
         with conn.cursor() as cur:
