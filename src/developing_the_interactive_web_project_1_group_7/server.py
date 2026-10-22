@@ -5,7 +5,7 @@ from flask import Flask, redirect, request, render_template, session, url_for
 from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
 import requests 
-from .db import save_user, create_mixtape, get_user_mixtapes, save_mixtape, unsave_mixtape, get_saved_mixtapes
+from .db import save_user, create_mixtape, get_user_mixtapes, save_mixtape, unsave_mixtape, get_saved_mixtapes, delete_mixtape
 from functools import wraps
 # from werkzeug import secure_filename
 
@@ -186,9 +186,14 @@ def view(mixtape_id):
 def remix():
     return render_template("remix_mixtape.html")
 
-@app.route("/my-mixtape")
-def my_mixtape():
-    return render_template("my_mixtape.html")
+@app.route("/my-mixtape", defaults={"mixtape_id": None})
+@app.route("/my-mixtape/<int:mixtape_id>")
+def my_mixtape(mixtape_id):
+    return render_template("my_mixtape.html", mixtape_id=mixtape_id)
+
+# @app.route("/my-mixtape")
+# def my_mixtape():
+#     return render_template("my_mixtape.html")
 
 # Temp create mixtape to test db
 @app.route("/demo/create", methods=["GET", "POST"])
@@ -249,3 +254,17 @@ def unsave(mixtape_id):
     unsave_mixtape(user["sub"], mixtape_id)
     app.logger.info("mixtape unsaved")
     return {"saved": False}
+
+@app.route("/mixtape/<int:mixtape_id>/delete", methods=["POST"])
+@requires_auth
+def delete(mixtape_id):
+    user = session.get("user")
+
+    delete_mixtape(user["sub"], mixtape_id)
+    app.logger.info("mixtape deleted")
+    return redirect(url_for("profile"))
+
+
+@app.route("/search-test")
+def search():
+    return render_template("search_modal.html")

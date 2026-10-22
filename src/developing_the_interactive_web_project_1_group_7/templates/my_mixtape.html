@@ -11,10 +11,10 @@
 <dialog id="delete-mixtape">
     <h4>Delete this Mixtape?</h4>
     <p>Are you sure you want to delete "Mixtape" from your library?</p>
-    <div class="dialog-buttons">
-        <button class="pure-button button-cancel" commandfor="delete-mixtape" command="close">Cancel</button>
-        <button class="pure-button button-confirm" commandfor="delete-mixtape" command="delete">Delete</button>
-    </div>
+    <form method="POST" action="/mixtape/{{ mixtape_id }}/delete" class="dialog-buttons">
+        <button type="button" class="pure-button button-cancel" commandfor="delete-mixtape" command="close">Cancel</button>
+        <button type="submit" class="pure-button button-confirm">Delete</button>
+    </form>
 </dialog>
 
 <dialog id="delete-song">
@@ -40,7 +40,7 @@
             <div class="pure-1-4">
                 <i class="fa-regular fa-pen-to-square" style="font-size: 22px; "></i>
             </div>
-            <div class="pure-1-4" onclick="document.getElementById('delete-modal').style.display='block'">
+            <div class="pure-1-4">
                <button command="show-modal" commandfor="delete-mixtape" style="background: none; border: none; color: white;">
                 <i class="fa-solid fa-trash-can" style="font-size: 22px; "></i>
                </button>

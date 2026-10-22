@@ -87,6 +87,14 @@ def get_saved_mixtapes(user_id):
     conn.close()
     return rows
 
+def delete_mixtape(user_id, mixtape_id):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("DELETE FROM mixtapes WHERE id = %s AND creator_id = %s", (mixtape_id, user_id))
+    conn.commit()
+    cur.close()
+    conn.close()
+
 if __name__ == "__main__":
     with get_db_connection() as conn:
         with conn.cursor() as cur:
