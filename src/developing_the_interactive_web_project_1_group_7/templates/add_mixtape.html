@@ -70,7 +70,28 @@
         <button type="submit" class="pure-button login">Search</button>
     </form>
 
-    {% for i in range(2) %}
+    {% if results %}
+        {% for item in results["tracks"]["items"] %}
+            <div class="pure-g song">
+                <div class="pure-u-4-24">
+                    <img class="song-img" src="{{item['album']['images'][2]['url']}}">
+                </div>
+                <div class="pure-u-16-24">
+                    <h5>{{item["name"]}}</h5>
+                    <div class="song-meta">
+                        <p>{{item["artists"][0]["name"]}}</p>
+                        <p>{{item["album"]["name"]}}</p>
+                    </div>
+                </div>
+                <div class="pure-u-4-24">
+                    <button type="button" class="pure-button login">Add</button>
+                </div>
+            </div>
+        {% endfor %}
+
+    {% endif %}
+
+    <!-- {% for i in range(2) %}
     <div class="pure-g song">
         <div class="pure-u-4-24">
             <img class="song-img" src="" alt="Song's Cover Image">
@@ -86,8 +107,8 @@
             <button type="button" class="pure-button login">Add</button>
         </div>
     </div>
-    {% endfor %}
-</div>
+    {% endfor %} -->
+</div> 
 
 <div style="text-align: right; padding: 20px 50px;">
     <button type="submit" form="mixtape-form" class="pure-button login">Save</button>
