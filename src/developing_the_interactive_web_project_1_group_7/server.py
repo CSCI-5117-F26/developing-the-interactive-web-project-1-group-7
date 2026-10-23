@@ -5,7 +5,7 @@ from flask import Flask, redirect, request, render_template, session, url_for
 from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
 import requests 
-from .db import save_user, create_mixtape, get_user_mixtapes, save_mixtape, unsave_mixtape, get_saved_mixtapes, delete_mixtape
+from .db import save_user, create_mixtape, get_user_mixtapes, save_mixtape, unsave_mixtape, get_saved_mixtapes, delete_mixtape, search_mixtapes
 from functools import wraps
 # from werkzeug import secure_filename
 
@@ -276,5 +276,15 @@ def delete(mixtape_id):
 
 
 @app.route("/search-test")
-def search():
+def search2():
     return render_template("search_modal.html")
+
+@app.route("/search")
+def search():
+    query = request.args.get("q", "").strip()
+
+    results = []
+    if query:
+        results = search_mixtapes(query)
+
+    return render_template("search_modal.html", query=query, results=results)

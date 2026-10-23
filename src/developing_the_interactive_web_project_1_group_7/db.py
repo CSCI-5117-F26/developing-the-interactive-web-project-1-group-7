@@ -95,6 +95,15 @@ def delete_mixtape(user_id, mixtape_id):
     cur.close()
     conn.close()
 
+def search_mixtapes(query):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT mixtapes.id, mixtapes.title, mixtapes.description FROM mixtapes", (query, query))
+    rows = cur.fetchall()
+    cur.close()
+    conn.close()
+    return rows
+
 if __name__ == "__main__":
     with get_db_connection() as conn:
         with conn.cursor() as cur:
