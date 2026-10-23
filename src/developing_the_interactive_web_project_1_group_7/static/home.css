@@ -1,0 +1,107 @@
+body {
+    background-color: rgb(35, 35, 35);
+    color: white;
+}
+
+h2 {
+    padding-left: 50px;
+}
+
+.filters {
+    display: flex;
+    padding-left: 50px;
+    flex-wrap: wrap;
+    row-gap: 15px;
+    padding-bottom: 20px;
+    column-gap: 25px;
+}
+
+.filters ul {
+    list-style: none;
+    display: flex;
+    gap: 12px;
+    padding: 0;
+    flex-wrap: wrap;
+    margin: 0;
+}
+
+.filters .pure-button {
+    border-radius: 30px;
+    padding: 5px 15px;
+    background-color: white;
+    font-weight: bold;
+}
+
+.filters .selected {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+}
+
+.filters .clear-filter {
+    background-color: #717171;
+    color: white;
+}
+
+/* I like having the tags be different colors because 
+I think it would make navigating the website easier,
+/* But, that would require us to have a set list of tags
+
+/* late-night */
+.filters .tag-late-night {
+    color: rgb(166, 0, 255);
+}
+
+/* morning */
+.filters .tag-morning {
+    color: rgb(0, 177, 212);
+}
+
+/* sleepy */
+.filters .tag-sleepy {
+    color: rgb(150, 120, 220);
+}
+
+/* chill */
+.filters .tag-chill {
+    color: rgb(50, 130, 255);
+}
+
+/* pop */
+.filters .tag-pop{
+    color: rgb(255, 0, 183);
+}
+
+/* alternative */
+.filters .tag-alternative {
+    color: rgb(255, 136, 0);
+}
+
+/* heartbreak */
+.filters .tag-heartbreak {
+    color: rgb(185, 0, 0);
+}
+
+/* study */
+.filters .tag-study {
+    color: rgb(59, 183, 136);
+}
+
+/* driving */
+.filters .tag-driving {
+    color: rgb(42, 167, 167);
+}
+
+/* workout */
+.filters .tag-workout {
+    color: rgb(220, 171, 35);
+}
+
+/* party */
+.filters .tag-party {
+    color: rgb(200, 50, 220);
+}
+
+/* getting-ready */
+.filters .tag-getting-ready {
+    color: rgb(255, 125, 192);
+}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='profile.css') }}">
+
+<div class="profile-info">
+    <i class="fa-solid fa-circle-user"></i>
+
+    <div>
+        <h2>{{ name }}</h2>
+        <!-- <button class="pure-button">Logout</button> -->
+        <a href="{{ url_for('logout') }}" class="pure-button">
+            Logout
+        </a>
+        <!-- <button class="pure-button">Settings</button> -->
+    </div>
+</div>
+
+<h2>My Mixtapes</h2>
+<div class="mixtape-prof">
+    {% for i in range(10) %}
+        <img class="mixtape-preview" src="{{ url_for('static', filename='images/cover.png') }}" alt="Mixtape cover">
+    {% endfor %}
+</div>
+
+<h2>Mixtapes I Saved</h2>
+<div class="mixtape-prof">
+    {% for i in range(10) %}
+        <img class="mixtape-preview" src="{{ url_for('static', filename='images/cover.png') }}" alt="Mixtape cover">
+    {% endfor %}
+</div>
+
+{% endblock %}

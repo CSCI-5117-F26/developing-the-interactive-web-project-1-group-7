@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Homepage{% endblock %}
+
+{% block content %}
+<section>
+
+    <h2>Browse recent mixtapes</h2>
+    <div class="filters">
+        <ul> 
+            <!-- <li><button class="pure-button selected">recent</button></li> -->
+            <!-- <li><button class="pure-button">popular</button></li> -->
+            {% for tag in selected_tags %}
+            <li>
+                <a href="{{ url_for('home', tag=selected_tags | reject('equalto', tag) | list) }}" class="pure-button tag-{{ tag }} selected">
+                    {{ tag }} <i class="fa-solid fa-xmark"></i>
+                </a>
+            </li>
+            {% endfor %}
+            {% if selected_tags %}
+            <li>
+                <a href="{{ url_for('home') }}" class="pure-button clear-filter">
+                    <i class="fa-solid fa-xmark"></i> Clear filters
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+        <ul>
+            {% for tag in mixtape_tags %}
+                {% if tag not in selected_tags %}
+                    <li>
+                        <a href="{{ url_for('home', tag=selected_tags + [tag]) }}" class="pure-button tag-{{ tag }}"> {{ tag }}
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="mixtapes">
+        <div class="pure-g">
+            <!-- Spotify API integration: -->
+            <!--
+            {% for mixtape in mixtapes %}
+                <div class="pure-u-1 pure-u-md-1-2 pure-u-lg-1-4">
+                    {% include "mixtape_template.html" %}
+                </div>
+            {% else %}
+                <p>No mixtapes found.</p>
+            {% endfor %} 
+            -->
+            {% for i in range(16) %}
+                <div class="pure-u-1 pure-u-md-1-2 pure-u-lg-1-4">
+                    {% include "mixtape_template.html" %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <!-- {% for mixtape in mixtapes %}
+        {% include "mixtape_template.html" %}
+    {% endfor %} -->
+
+</section>
+
+
+{% endblock %}

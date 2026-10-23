@@ -1,0 +1,337 @@
+import base64
+import os, psycopg
+
+from flask import Flask, redirect, request, render_template, session, url_for
+from authlib.integrations.flask_client import OAuth
+from dotenv import load_dotenv
+import requests 
+from .db import save_user, create_mixtape, get_user_mixtapes, save_mixtape, unsave_mixtape, get_saved_mixtapes, delete_mixtape
+from functools import wraps
+# from werkzeug import secure_filename
+
+load_dotenv()
+
+
+app = Flask(__name__)
+
+# Filter tags
+MIXTAPE_TAGS = ["late-night", "morning", "sleepy", "chill", "pop", "alternative", "heartbreak", "study", "driving", "workout", "party", "getting-ready"]
+
+#Auth0
+app.secret_key = os.environ["FLASK_SECRET_KEY"]
+DATABASE_URL = os.environ["DATABASE_URL"]
+
+app.config.update(
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE="Lax",
+    SESSION_COOKIE_SECURE=os.environ.get("RENDER") == "true",
+)
+oauth = OAuth(app)
+
+oauth.register(
+    name="auth0",
+    client_id=os.environ["AUTH0_CLIENT_ID"],
+    client_secret=os.environ["AUTH0_CLIENT_SECRET"],
+    server_metadata_url=(
+        f"https://{os.environ['AUTH0_DOMAIN']}"
+        "/.well-known/openid-configuration"
+    ),
+    client_kwargs={"scope": "openid profile email"},
+)
+
+def requires_auth(f):
+  @wraps(f)
+  def decorated(*args, **kwargs):
+    # fixing this line cause it's error
+    # if session.get("user") not in session:
+    if "user" not in session:
+      return redirect('/login')
+    return f(*args, **kwargs) #do the normal behavior -- return as it does.
+
+  return decorated
+
+# Login
+@app.route("/login")
+def login():
+    return oauth.auth0.authorize_redirect(
+        redirect_uri=url_for("callback", _external=True)
+    )
+
+# validate authentication response
+@app.route("/callback")
+def callback():
+    token = oauth.auth0.authorize_access_token()
+
+    user = dict(token["userinfo"])
+
+    # Save or update the user in PostgreSQL
+    save_user(user)
+
+    session.clear()
+    session["user"] = user
+
+    return redirect(url_for("home"))
+
+# SignUp
+@app.route("/signup")
+def signup():
+    return oauth.auth0.authorize_redirect(
+        redirect_uri=url_for("callback", _external=True),
+        screen_hint="signup"
+    )
+
+# Logout
+@app.route("/logout")
+def logout():
+    session.clear()
+
+    return_to = url_for("home", _external=True)
+
+    from urllib.parse import urlencode
+
+    params = urlencode({
+        "returnTo": return_to,
+        "client_id": os.environ["AUTH0_CLIENT_ID"]
+    })
+
+    return redirect(
+        f"https://{os.environ['AUTH0_DOMAIN']}/v2/logout?{params}"
+    )
+# Testing the session - temp code
+@app.route("/profile")
+def profile():
+    user = session.get("user")
+
+    if not user:
+        return redirect(url_for("login"))
+
+    # return f"""
+    #     <h2>Welcome, {user.get('name', 'User')}!</h2>
+    #     <p>You are successfully logged in</p>
+    #     <a href="/logout">Logout</a>
+    # """
+    return render_template("profile.html", name=user.get("name", "User"),)
+
+# Added this so I could run my html easier, feel free to change anything this is just temp routing
+
+@app.route("/")
+def home():
+    selected_tags = request.args.getlist("tag")
+
+    selected_tags = [
+        tag for tag in selected_tags if tag in MIXTAPE_TAGS
+    ]
+
+    return render_template("home.html", mixtape_tags=MIXTAPE_TAGS, selected_tags=selected_tags)
+
+# @app.route("/login")
+# def login():
+#     return render_template("login.html")
+
+# @app.route("/profile")
+# def profile():
+#     return render_template("profile.html")
+
+# Add Mixtape or Create Mixtape
+
+@app.route("/create", methods=["GET", "POST"])
+@requires_auth
+def create():
+    user = session["user"]
+
+    if request.method == "POST":
+        title = request.form.get("title", "").strip()
+        description = request.form.get("description", "").strip()
+
+        if not title or len(title) > 150:
+            return "Title must be between 1 and 150 characters.", 400
+
+        mixtape_id = create_mixtape(
+            user["sub"],
+            title,
+            description
+        )
+
+        return redirect(url_for("profile"))
+
+    return render_template(
+        "add_mixtape.html",
+        name=user.get("name", "User"),
+        mixtape_tags=MIXTAPE_TAGS
+    )
+
+# Redirecting just for compatibility - should work without this
+@app.route("/add")
+def add():
+    return redirect(url_for("create"))
+
+# @app.route("/create/search", methods=["GET", "POST"])
+# def track_search():
+#     if request.method=="POST":
+#         access_token = get_access_token()
+#         headers={"Authorization": f"Bearer {access_token}"}
+#         query = request.form.get("q")
+#         response = requests.get(f"https://api.spotify.com/v1/search?q={query}&type=track", headers=headers)
+#         results = response.json()
+#         return render_template("add_mixtape.html", results=results)
+#     return render_template("add_mixtape.html")
+
+
+@app.route("/create/search", methods=["GET", "POST"])
+@requires_auth
+def track_search():
+    user = session["user"]
+
+    if request.method == "POST":
+        access_token = get_access_token()
+        headers = {"Authorization": f"Bearer {access_token}"}
+
+        query = request.form.get("q", "").strip()
+
+        response = requests.get(
+            "https://api.spotify.com/v1/search",
+            headers=headers,
+            params={"q": query, "type": "track"},
+            timeout=10
+        )
+        response.raise_for_status()
+
+        results = response.json()
+
+        return render_template(
+            "add_mixtape.html",
+            results=results,
+            name=user.get("name", "User"),
+            mixtape_tags=MIXTAPE_TAGS
+        )
+
+    return redirect(url_for("create"))
+
+
+def get_access_token():
+    client_id = os.environ["SPOTIFY_CLIENT_ID"]
+    client_secret = os.environ["SPOTIFY_CLIENT_SECRET"]
+    encoded = base64.b64encode(f"{client_id}:{client_secret}".encode("utf-8"))
+    authOptions = {
+        "url": 'https://accounts.spotify.com/api/token',
+        "headers": {
+            'Authorization': f"Basic {str(encoded, "utf-8")}",
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        "form": {
+            "grant_type": 'client_credentials'
+        }
+    }
+    response = requests.post(url=authOptions["url"], headers=authOptions["headers"], data=authOptions["form"])
+    return response.json()["access_token"]
+
+@app.route("/edit")
+def edit():
+    return render_template("edit_mixtape.html")
+
+# @app.route("/create")
+# def create():
+#     return render_template("mixtape_template.html")
+
+
+@app.route("/view", defaults={"mixtape_id": None})
+@app.route("/view/<int:mixtape_id>")
+def view(mixtape_id):
+    user = session.get("user")
+
+    # check if the mixtape alr saved (filled or empty)
+    saved = False
+    if user and mixtape_id:
+        for saved_mixtape in get_saved_mixtapes(user["sub"]):
+            if saved_mixtape[0] == mixtape_id:
+                saved = True
+
+    return render_template("view_mixtape.html", mixtape_id=mixtape_id, saved=saved)
+
+@app.route("/remix")
+@requires_auth 
+def remix():
+    return render_template("remix_mixtape.html")
+
+@app.route("/my-mixtape", defaults={"mixtape_id": None})
+@app.route("/my-mixtape/<int:mixtape_id>")
+def my_mixtape(mixtape_id):
+    return render_template("my_mixtape.html", mixtape_id=mixtape_id)
+
+# @app.route("/my-mixtape")
+# def my_mixtape():
+#     return render_template("my_mixtape.html")
+
+# Temp create mixtape to test db
+@app.route("/demo/create", methods=["GET", "POST"])
+@requires_auth
+def demo_create():
+    user = session.get("user")
+
+    if not user:
+        return redirect(url_for("login"))
+
+    if request.method == "POST":
+        title = request.form.get("title", "").strip()
+        description = request.form.get("description", "").strip()
+
+        if not title or len(title) > 150:
+            return "Title must be between 1 and 150 characters.", 400
+
+        mixtape_id = create_mixtape(
+            user["sub"],
+            title,
+            description
+        )
+
+        # return redirect(url_for("demo_create"))
+        return redirect(url_for("profile"))
+
+    mixtapes = get_user_mixtapes(user["sub"])
+
+    return render_template(
+    "add_mixtape.html",
+    mixtapes=mixtapes
+    )
+
+    # return render_template(
+    #     "demo_create.html",
+    #     mixtapes=mixtapes
+    # )
+    
+# Temp so I can view profile.html easier
+@app.route("/profile-test")
+def profile_preview():
+    return render_template("profile.html")
+
+@app.route("/mixtape/<int:mixtape_id>/save", methods=["POST"])
+@requires_auth
+def save(mixtape_id):
+    user = session.get("user")
+
+    save_mixtape(user["sub"], mixtape_id)
+    app.logger.info("mixtape saved")
+    return {"saved": True}
+
+@app.route("/mixtape/<int:mixtape_id>/unsave", methods=["POST"])
+@requires_auth
+def unsave(mixtape_id):
+    user = session.get("user")
+
+    unsave_mixtape(user["sub"], mixtape_id)
+    app.logger.info("mixtape unsaved")
+    return {"saved": False}
+
+@app.route("/mixtape/<int:mixtape_id>/delete", methods=["POST"])
+@requires_auth
+def delete(mixtape_id):
+    user = session.get("user")
+
+    delete_mixtape(user["sub"], mixtape_id)
+    app.logger.info("mixtape deleted")
+    return redirect(url_for("profile"))
+
+
+@app.route("/search-test")
+def search():
+    return render_template("search_modal.html")
