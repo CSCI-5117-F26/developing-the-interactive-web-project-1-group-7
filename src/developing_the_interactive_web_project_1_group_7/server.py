@@ -132,21 +132,81 @@ def home():
 # def profile():
 #     return render_template("profile.html")
 
-@app.route("/create")
+# Add Mixtape or Create Mixtape
+
+@app.route("/create", methods=["GET", "POST"])
+@requires_auth
 def create():
-    # temporary for now 
-    return redirect("/create/search")
+    user = session["user"]
+
+    if request.method == "POST":
+        title = request.form.get("title", "").strip()
+        description = request.form.get("description", "").strip()
+
+        if not title or len(title) > 150:
+            return "Title must be between 1 and 150 characters.", 400
+
+        mixtape_id = create_mixtape(
+            user["sub"],
+            title,
+            description
+        )
+
+        return redirect(url_for("profile"))
+
+    return render_template(
+        "add_mixtape.html",
+        name=user.get("name", "User"),
+        mixtape_tags=MIXTAPE_TAGS
+    )
+
+# Redirecting just for compatibility - should work without this
+@app.route("/add")
+def add():
+    return redirect(url_for("create"))
+
+# @app.route("/create/search", methods=["GET", "POST"])
+# def track_search():
+#     if request.method=="POST":
+#         access_token = get_access_token()
+#         headers={"Authorization": f"Bearer {access_token}"}
+#         query = request.form.get("q")
+#         response = requests.get(f"https://api.spotify.com/v1/search?q={query}&type=track", headers=headers)
+#         results = response.json()
+#         return render_template("add_mixtape.html", results=results)
+#     return render_template("add_mixtape.html")
+
 
 @app.route("/create/search", methods=["GET", "POST"])
+@requires_auth
 def track_search():
-    if request.method=="POST":
+    user = session["user"]
+
+    if request.method == "POST":
         access_token = get_access_token()
-        headers={"Authorization": f"Bearer {access_token}"}
-        query = request.form.get("q")
-        response = requests.get(f"https://api.spotify.com/v1/search?q={query}&type=track", headers=headers)
+        headers = {"Authorization": f"Bearer {access_token}"}
+
+        query = request.form.get("q", "").strip()
+
+        response = requests.get(
+            "https://api.spotify.com/v1/search",
+            headers=headers,
+            params={"q": query, "type": "track"},
+            timeout=10
+        )
+        response.raise_for_status()
+
         results = response.json()
-        return render_template("add_mixtape.html", results=results)
-    return render_template("add_mixtape.html")
+
+        return render_template(
+            "add_mixtape.html",
+            results=results,
+            name=user.get("name", "User"),
+            mixtape_tags=MIXTAPE_TAGS
+        )
+
+    return redirect(url_for("create"))
+
 
 def get_access_token():
     client_id = os.environ["SPOTIFY_CLIENT_ID"]
@@ -173,9 +233,6 @@ def edit():
 # def create():
 #     return render_template("mixtape_template.html")
 
-@app.route("/add")
-def add():
-    return render_template("add_mixtape.html", mixtape_tags=MIXTAPE_TAGS)
 
 @app.route("/view", defaults={"mixtape_id": None})
 @app.route("/view/<int:mixtape_id>")
