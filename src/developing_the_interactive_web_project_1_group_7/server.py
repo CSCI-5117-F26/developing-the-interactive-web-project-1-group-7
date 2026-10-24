@@ -166,11 +166,13 @@ def view(mixtape_id):
         abort(404)
 
     saved = bool(user) and is_mixtape_saved(user["sub"], mixtape_id)
-
+    # check if the logged-in user is the creator of this mixtape?
+    is_owner = bool(user) and user["sub"] == mixtape["creator_id"]
     return render_template(
         "view_mixtape.html",
         mixtape=mixtape,
         mixtape_id=mixtape_id,
+        is_owner=is_owner,
         saved=saved
     )
 

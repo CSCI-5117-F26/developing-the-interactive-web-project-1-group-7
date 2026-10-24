@@ -88,7 +88,31 @@
         </ul>
         {% endif %}
 
-        {% if session.get("user") %}
+        {% if is_owner %}
+        
+        <div class="actions pure-g">
+            <div class="pure-u-16-24">
+                <div id="edit" class="remix-button"><a href="{{ url_for('my_mixtape', mixtape_id=mixtape.id) }}" style="color: black; text-decoration: none;"><i class="fa-regular fa-pen-to-square"></i><span style="margin-left: 10px;">Edit</span></a></div>
+            </div>
+            <div class="pure-u-1-24">
+                <button type="button" id="export" class="save icon-button"><i class="fa-solid fa-share"></i></button>
+            </div>
+            <div class="pure-u-1-24"></div>
+            <div class="pure-u-1-24">
+                <button type="button" class="save icon-button" command="show-modal" commandfor="delete-mixtape" aria-label="Delete mixtape"><i class="fa-solid fa-trash-can"></i></button>
+            </div>
+        </div>
+
+        <dialog id="delete-mixtape">
+            <h4>Delete this Mixtape?</h4>
+            <p>Are you sure you want to delete "{{ mixtape.title }}" from your library?</p>
+            <form method="POST" action="/mixtape/{{ mixtape.id }}/delete" class="dialog-buttons">
+                <button type="button" class="pure-button button-cancel" commandfor="delete-mixtape" command="close">Cancel</button>
+                <button type="submit" class="pure-button button-confirm">Delete</button>
+            </form>
+        </dialog>
+
+        {% elif session.get("user") %}
         <div class="actions pure-g">
             <div class="pure-u-16-24">
                 <div id="remix" class="remix-button"><a href="{{ url_for('remix') }}" style="color: black; text-decoration: none;"><i class="fa-solid fa-compact-disc"></i><span style="margin-left: 10px;">Remix</span></a></div>
