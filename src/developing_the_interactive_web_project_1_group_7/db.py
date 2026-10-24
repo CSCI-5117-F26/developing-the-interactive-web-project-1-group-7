@@ -298,6 +298,11 @@ def delete_mixtape(user_id, mixtape_id):
                 (mixtape_id, user_id),
             )
 
+def cover_to_db(filestream, mixtape_id):
+    with get_db_connection() as conn:
+        with conn.cursor() as cur:
+            # TODO
+            cur.execute()
 
 # Note to dev
 # Run `python -m developing_the_interactive_web_project_1_group_7.db` to test the connection

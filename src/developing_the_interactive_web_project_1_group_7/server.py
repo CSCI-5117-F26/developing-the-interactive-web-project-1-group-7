@@ -11,6 +11,7 @@ import requests
 from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
 from flask import Flask, abort, redirect, request, render_template, send_file, session, url_for
+from werkzeug.utils import secure_filename
 
 from .db import (
     save_user,
@@ -24,6 +25,7 @@ from .db import (
     save_mixtape,
     unsave_mixtape,
     delete_mixtape,
+    cover_to_db,
 )
 
 load_dotenv()
@@ -266,6 +268,14 @@ def add():
 @app.route("/edit")
 def edit():
     return render_template("edit_mixtape.html")
+
+@app.route("/edit/<int:mixtape_id>/upload_cover", methods=["POST"])
+def upload_cover(mixtape_id):
+    file = request.files["image"]
+    # maybe not needed?
+    # filename = secure_filename(file.filename)
+    filestream = file.read()
+    cover_to_db(filestream, mixtape_id)
 
 
 # Remix page (placeholder)
