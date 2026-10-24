@@ -29,6 +29,40 @@
 #mixtape-cover-img {
     width: 85%;
 }
+
+/* Album art fills the whole cover card */
+#mixtape-cover-img.album-cover {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 15px;
+}
+
+.filters.view-tags {
+    margin-bottom: 20px;
+}
+
+/* Keep line breaks the creator typed */
+#mixtape-desc {
+    white-space: pre-line;
+}
+
+#remix-source a {
+    color: inherit;
+}
+
+.save.icon-button {
+    color: white;
+}
+
+.spotify-link {
+    color: inherit;
+    font-size: 18px;
+}
+
+.spotify-link:hover {
+    color: #1DB954;
+}
  
 .mixtape-desc {
     font-size: 15px;
