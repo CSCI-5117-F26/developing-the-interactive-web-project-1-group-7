@@ -93,6 +93,9 @@
             <div class="pure-u-16-24">
                 <div id="remix" class="remix-button"><a href="{{ url_for('remix') }}" style="color: black; text-decoration: none;"><i class="fa-solid fa-compact-disc"></i><span style="margin-left: 10px;">Remix</span></a></div>
             </div>
+            <div class="pure-u-1-24">
+                <button type="button" id="export" class="save icon-button"><i class="fa-solid fa-share"></i></button>
+            </div>
             <div class="pure-u-1-24"></div>
             <div class="pure-u-1-24">
                 <button type="button" id="save" class="save icon-button" aria-pressed="{{ 'true' if saved else 'false' }}" aria-label="Save mixtape"><i id="save-icon" class="{{ 'fa-solid' if saved else 'fa-regular' }} fa-bookmark"></i></button>
@@ -106,6 +109,9 @@
         <div class="actions pure-g">
             <div class="pure-u-16-24">
                 <div id="remix" class="remix-button"><a href="{{ url_for('remix') }}" style="color: grey; text-decoration: none;"><i class="fa-solid fa-compact-disc"></i><span style="margin-left: 10px;">Remix</span></a></div>
+            </div>
+            <div class="pure-u-1-24">
+                <button type="button" id="export" class="save icon-button"><i class="fa-solid fa-share"></i></button>
             </div>
             <div class="pure-u-1-24"></div>
             <div class="pure-u-1-24">
