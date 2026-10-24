@@ -1,16 +1,25 @@
-<div class="mixtape-card">
+<a class="mixtape-card" href="{{ url_for('view', mixtape_id=mixtape.id) }}">
 
-    <!-- I am not sure how/if we want to implement a mixtape cover generator
-        for this benchmark, I just added this as a placeholder -->
-        <img src="/static/images/cover.png" alt="mixtape cover" width="200">
-    
+    <!-- Cover is the first song's album art; falls back to the placeholder -->
+     <!-- Need to work on upload cover -->
+    <img src="{{ mixtape.cover_image_url or url_for('static', filename='images/cover.png') }}" alt="{{ mixtape.title }} cover" width="200" loading="lazy">
+
     <div class="mixtape-description">
-        <h3>Mixtape Title</h3>
-        <p>by Jane Doe • 22 Tracks • 10 saved</p>
-        <p>
-            Mixtape description lorem ipsum dolor sit amet,
-            it can be quite long and we can clip it if
-            it's too long.
+        <h3>{{ mixtape.title }}</h3>
+        <p class="mixtape-meta">
+            by {{ mixtape.creator_name }}
+            • {{ mixtape.track_count }} {{ "Track" if mixtape.track_count == 1 else "Tracks" }}
+            • {{ mixtape.saved_count }} saved
         </p>
+        {% if mixtape.description %}
+        <p class="mixtape-card-desc">{{ mixtape.description }}</p>
+        {% endif %}
+        {% if mixtape.tags %}
+        <ul class="filters card-tags">
+            {% for tag in mixtape.tags %}
+            <li><span class="pure-button tag-{{ tag }}">{{ tag }}</span></li>
+            {% endfor %}
+        </ul>
+        {% endif %}
     </div>
-</div>
+</a>

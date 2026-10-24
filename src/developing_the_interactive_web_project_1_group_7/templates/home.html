@@ -39,26 +39,21 @@
 
     <div class="mixtapes">
         <div class="pure-g">
-            <!-- Spotify API integration: -->
-            <!--
             {% for mixtape in mixtapes %}
                 <div class="pure-u-1 pure-u-md-1-2 pure-u-lg-1-4">
                     {% include "mixtape_template.html" %}
                 </div>
             {% else %}
-                <p>No mixtapes found.</p>
-            {% endfor %} 
-            -->
-            {% for i in range(16) %}
-                <div class="pure-u-1 pure-u-md-1-2 pure-u-lg-1-4">
-                    {% include "mixtape_template.html" %}
-                </div>
+                <p class="no-mixtapes">
+                    {% if selected_tags %}
+                        No mixtapes match these tags yet.
+                    {% else %}
+                        No mixtapes yet. <a href="{{ url_for('create') }}">Make the first one!</a>
+                    {% endif %}
+                </p>
             {% endfor %}
         </div>
     </div>
-    <!-- {% for mixtape in mixtapes %}
-        {% include "mixtape_template.html" %}
-    {% endfor %} -->
 
 </section>
 
