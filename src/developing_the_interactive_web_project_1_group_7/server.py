@@ -135,7 +135,7 @@ def home():
 @app.route("/create")
 def create():
     # temporary for now 
-    return redirect("/create/search")
+    return redirect(url_for("track_search"))
 
 @app.route("/create/search", methods=["GET", "POST"])
 def track_search():
@@ -145,8 +145,8 @@ def track_search():
         query = request.form.get("q")
         response = requests.get(f"https://api.spotify.com/v1/search?q={query}&type=track", headers=headers)
         results = response.json()
-        return render_template("add_mixtape.html", results=results)
-    return render_template("add_mixtape.html")
+        return render_template("add_mixtape.html", results=results, mixtape_tags=MIXTAPE_TAGS)
+    return redirect(url_for("add"))
 
 def get_access_token():
     client_id = os.environ["SPOTIFY_CLIENT_ID"]
@@ -175,7 +175,18 @@ def edit():
 
 @app.route("/add")
 def add():
+    if "added" not in session:
+        session["added"] = []
     return render_template("add_mixtape.html", mixtape_tags=MIXTAPE_TAGS)
+
+@app.route("/add/addtrack", methods=["GET", "POST"])
+def add_track_to_session():
+    track = request.get_json()
+    if "added" not in session:
+        session["added"] = []
+    session["added"].append(track.get("track"))
+    session.modified = True 
+    return redirect(url_for("add"))
 
 @app.route("/view", defaults={"mixtape_id": None})
 @app.route("/view/<int:mixtape_id>")

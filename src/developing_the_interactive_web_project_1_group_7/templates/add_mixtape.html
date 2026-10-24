@@ -52,13 +52,18 @@
         </div>
     </dialog>
 
-    {% if songs %}
+    {% if session["added"] %}
     <div style="padding: 20px 50px;">
-        {% for song in songs %}
+        {% for track in session["added"] %}
+            {{track}}
             {% include "./components/songs_edit.html" %}
         {% endfor %}
     </div>
     {% endif %}
+
+    <div style="text-align: right; padding: 20px 50px;">
+        <button type="submit" form="mixtape-form" class="pure-button login">Save</button>
+    </div>
 
 </form>
 
@@ -83,11 +88,14 @@
                         <p>{{item["album"]["name"]}}</p>
                     </div>
                 </div>
+                
                 <div class="pure-u-4-24">
-                    <button type="button" class="pure-button login">Add</button>
+                    <button type="button" class="pure-button login" data-track="{{item['name']}}">Add</button>
                 </div>
+                
             </div>
         {% endfor %}
+        
 
     {% endif %}
 
@@ -110,10 +118,34 @@
     {% endfor %} -->
 </div> 
 
-<div style="text-align: right; padding: 20px 50px;">
-    <button type="submit" form="mixtape-form" class="pure-button login">Save</button>
-</div>
+
 
 </section>
 
+<script>
+    console.log("start")
+    document.querySelectorAll('.pure-button login').forEach(button => {
+        button.addEventListener('click', function() {
+            const track = this.getAttribute('data-track');
+            console.log("after data")
+            fetch("{{url_for('add_track_to_session')}}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ track: track })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('Track added. Current track: ' + data.track);
+                } else{
+                    alert("Here")
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
+</script>
 {% endblock %}
+
