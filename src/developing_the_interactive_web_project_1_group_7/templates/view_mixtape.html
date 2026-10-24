@@ -111,7 +111,7 @@
                 <div id="remix" class="remix-button"><a href="{{ url_for('remix') }}" style="color: grey; text-decoration: none;"><i class="fa-solid fa-compact-disc"></i><span style="margin-left: 10px;">Remix</span></a></div>
             </div>
             <div class="pure-u-1-24">
-                <button type="button" id="export" class="save icon-button"><i class="fa-solid fa-share"></i></button>
+                <button type="button" id="export" class="save icon-button" onClick="window.location.href='{{ url_for('export', mixtape_id=mixtape_id) }}' ;"><i class="fa-solid fa-share"></i></button>
             </div>
             <div class="pure-u-1-24"></div>
             <div class="pure-u-1-24">

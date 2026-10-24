@@ -1,4 +1,5 @@
 import base64
+import io
 import os
 import re
 import time
@@ -9,7 +10,7 @@ from urllib.parse import urlencode
 import requests
 from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
-from flask import Flask, abort, redirect, request, render_template, session, url_for
+from flask import Flask, abort, redirect, request, render_template, send_file, session, url_for
 
 from .db import (
     save_user,
@@ -172,6 +173,26 @@ def view(mixtape_id):
         mixtape=mixtape,
         mixtape_id=mixtape_id,
         saved=saved
+    )
+
+@app.route("/view/<int:mixtape_id>/export")
+def export(mixtape_id):
+    mixtape = get_mixtape(mixtape_id)
+    if mixtape is None:
+        abort(404)
+    lines = []
+    for track in mixtape["tracks"]:
+        lines.append(f"{track["position"]} {track["title"]} by {track["artist"]}")
+
+    data = "\n".join(lines)
+    
+    buffer = io.BytesIO(data.encode("utf-8"))
+    
+    return send_file(
+        buffer,
+        as_attachment=True,
+        download_name=f"{mixtape["title"]}.txt",
+        mimetype='text/plain'
     )
 
 
