@@ -195,8 +195,8 @@ def list_saved_mixtapes(user_id):
 # Mixtapes whose title or description contains the search text
 def search_mixtapes(query):
     conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute("SELECT mixtapes.id, mixtapes.title, mixtapes.description FROM mixtapes WHERE mixtapes.title ILIKE %s OR mixtapes.description ILIKE %s", (f"%{query}%", f"%{query}%"))
+    cur = conn.cursor(row_factory=dict_row)
+    cur.execute(MIXTAPE_SUMMARY_SQL + " WHERE m.title ILIKE %s OR m.description ILIKE %s ORDER BY m.created_at DESC, m.id DESC", (f"%{query}%", f"%{query}%"))
     rows = cur.fetchall()
     cur.close()
     conn.close()
