@@ -28,6 +28,7 @@
 <h3 style="color: black;">Showing results for "{{ query }}"</h3>
 
     {% for mixtape in results %}
+    <a href="{{ url_for('view', mixtape_id=mixtape.id) }}" style="text-decoration: none;">
     <div class="pure-g" style="background-color: #E6E6E6; margin-bottom: 10px;">
         <div class="pure-u-5-24">
             <div style="background-color: grey; border-radius: 15px; margin: 10px; width: 90px; height: 90px;"> 
@@ -52,6 +53,7 @@
         </div>
 
     </div>
+    </a>
     {% else %}
     <p style="color: black;">No mixtapes found.</p>
     {% endfor %}
