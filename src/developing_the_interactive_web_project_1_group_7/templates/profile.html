@@ -20,15 +20,21 @@
 
 <h2>My Mixtapes</h2>
 <div class="mixtape-prof">
-    {% for i in range(10) %}
-        <img class="mixtape-preview" src="{{ url_for('static', filename='images/cover.png') }}" alt="Mixtape cover">
+    {% set show_creator = false %}
+    {% for mixtape in my_mixtapes %}
+        {% include "./components/mixtape_tile.html" %}
+    {% else %}
+        <p class="empty-row">You haven't made any mixtapes yet. <a href="{{ url_for('create') }}">Create your first one</a></p>
     {% endfor %}
 </div>
 
 <h2>Mixtapes I Saved</h2>
 <div class="mixtape-prof">
-    {% for i in range(10) %}
-        <img class="mixtape-preview" src="{{ url_for('static', filename='images/cover.png') }}" alt="Mixtape cover">
+    {% set show_creator = true %}
+    {% for mixtape in saved_mixtapes %}
+        {% include "./components/mixtape_tile.html" %}
+    {% else %}
+        <p class="empty-row">No saved mixtapes yet. Tap the <i class="fa-regular fa-bookmark"></i> on any mixtape to save it here. <a href="{{ url_for('home') }}">Browse mixtapes</a></p>
     {% endfor %}
 </div>
 

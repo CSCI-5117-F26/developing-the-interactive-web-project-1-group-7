@@ -1,0 +1,8 @@
+<!-- Small mixtape tile for the profile rows. Expects `mixtape` from list_user_mixtapes / list_saved_mixtapes. -->
+<a class="mixtape-tile" href="{{ url_for('view', mixtape_id=mixtape.id) }}">
+    <img class="mixtape-preview" src="{{ mixtape.cover_image_url or url_for('static', filename='images/cover.png') }}" alt="{{ mixtape.title }} cover" loading="lazy">
+    <span class="tile-title">{{ mixtape.title }}</span>
+    <span class="tile-meta">
+        {% if show_creator %}by {{ mixtape.creator_name }} • {% endif %}{{ mixtape.track_count }} {{ "track" if mixtape.track_count == 1 else "tracks" }}
+    </span>
+</a>
