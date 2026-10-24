@@ -47,6 +47,12 @@
     cursor: default;
 }
 
+.remix-note {
+    color: #cccccc;
+    font-size: 14px;
+    margin: 0 0 8px 0;
+}
+
 .selected-songs-wrapper {
     padding: 20px 50px;
 }

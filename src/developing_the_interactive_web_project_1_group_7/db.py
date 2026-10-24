@@ -75,16 +75,16 @@ def save_user(user):
 
 
 # Create a mixtape with its tags and ordered tracks 
-def create_mixtape(user_id, title, description, tags=(), tracks=()):
+def create_mixtape(user_id, title, description, tags=(), tracks=(), remixed_from_id=None):
     with get_db_connection() as conn:
         with conn.cursor() as cur:
             cur.execute(
                 """
-                INSERT INTO mixtapes (creator_id, title, description)
-                VALUES (%s, %s, %s)
+                INSERT INTO mixtapes (creator_id, title, description, remixed_from_id)
+                VALUES (%s, %s, %s, %s)
                 RETURNING id
                 """,
-                (user_id, title, description),
+                (user_id, title, description, remixed_from_id),
             )
 
             mixtape_id = cur.fetchone()[0]
@@ -93,6 +93,31 @@ def create_mixtape(user_id, title, description, tags=(), tracks=()):
             _insert_mixtape_tracks(cur, mixtape_id, tracks)
 
     return mixtape_id
+
+
+# Replace a mixtape's details, tags and tracks in one transaction; False if the user doesn't own it
+def update_mixtape(user_id, mixtape_id, title, description, tags=(), tracks=()):
+    with get_db_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                UPDATE mixtapes
+                SET title = %s, description = %s
+                WHERE id = %s AND creator_id = %s
+                """,
+                (title, description, mixtape_id, user_id),
+            )
+
+            if cur.rowcount == 0:
+                return False
+
+            cur.execute("DELETE FROM mixtape_tags WHERE mixtape_id = %s", (mixtape_id,))
+            cur.execute("DELETE FROM mixtape_tracks WHERE mixtape_id = %s", (mixtape_id,))
+
+            _insert_mixtape_tags(cur, mixtape_id, tags)
+            _insert_mixtape_tracks(cur, mixtape_id, tracks)
+
+    return True
 
 
 # Add tags to a mixtape 

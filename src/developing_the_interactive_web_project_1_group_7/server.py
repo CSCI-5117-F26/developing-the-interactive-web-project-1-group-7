@@ -16,6 +16,7 @@ from werkzeug.utils import secure_filename
 from .db import (
     save_user,
     create_mixtape,
+    update_mixtape,
     list_mixtapes,
     list_user_mixtapes,
     list_saved_mixtapes,
@@ -204,58 +205,118 @@ def export(mixtape_id):
 @app.route("/create", methods=["GET", "POST"])
 @requires_auth
 def create():
-    user = session["user"]
-
     if request.method == "POST":
-        title = request.form.get("title", "").strip()
-        description = request.form.get("description", "").strip()
+        fields, error = read_mixtape_form()
+        if error:
+            return error
 
-        if not title or len(title) > 150:
-            return "Title must be between 1 and 150 characters.", 400
-
-        tags = [
-            tag for tag in request.form.getlist("tags") if tag in MIXTAPE_TAGS
-        ]
-
-        # Each song row submits a track_ids and an annotations value, in order.
-        # Keep the submitted order, drop duplicates.
-        annotations = {}
-        for track_id, note in zip_longest(
-            request.form.getlist("track_ids"),
-            request.form.getlist("annotations"),
-            fillvalue=""
-        ):
-            annotations.setdefault(track_id, note.strip() or None)
-        track_ids = list(annotations)
-
-        if len(track_ids) > MAX_TRACKS:
-            return f"A mixtape can have at most {MAX_TRACKS} songs.", 400
-
-        if not all(SPOTIFY_ID_PATTERN.fullmatch(t) for t in track_ids):
-            return "Invalid song.", 400
-
-        if any(note and len(note) > MAX_ANNOTATION_LENGTH for note in annotations.values()):
-            return f"Song notes can be at most {MAX_ANNOTATION_LENGTH} characters.", 400
-
-        try:
-            tracks = get_spotify_tracks(track_ids)
-            for track in tracks:
-                track["annotation"] = annotations[track["spotify_id"]]
-        except LookupError:
-            return "One of the songs could not be found on Spotify.", 400
-        except (requests.RequestException, KeyError, ValueError):
-            app.logger.exception("Spotify track lookup failed")
-            return "Spotify is unavailable right now. Please try again.", 502
-
-        create_mixtape(user["sub"], title, description, tags, tracks)
+        create_mixtape(session["user"]["sub"], **fields)
 
         return redirect(url_for("profile"))
 
+    return render_mixtape_editor("create", url_for("create"))
+
+
+# Edit your own mixtape in the same editor as create
+@app.route("/mixtape/<int:mixtape_id>/edit", methods=["GET", "POST"])
+@requires_auth
+def edit(mixtape_id):
+    user = session["user"]
+
+    mixtape = get_mixtape(mixtape_id)
+    if mixtape is None:
+        abort(404)
+    if mixtape["creator_id"] != user["sub"]:
+        abort(403)
+
+    if request.method == "POST":
+        fields, error = read_mixtape_form()
+        if error:
+            return error
+
+        update_mixtape(user["sub"], mixtape_id, **fields)
+
+        return redirect(url_for("view", mixtape_id=mixtape_id))
+
+    return render_mixtape_editor("edit", url_for("edit", mixtape_id=mixtape_id), mixtape)
+
+
+# Remix: start from a copy of any mixtape (yours or someone else's) and save it as a new one of your own
+@app.route("/mixtape/<int:mixtape_id>/remix", methods=["GET", "POST"])
+@requires_auth
+def remix(mixtape_id):
+    source = get_mixtape(mixtape_id)
+    if source is None:
+        abort(404)
+
+    if request.method == "POST":
+        fields, error = read_mixtape_form()
+        if error:
+            return error
+
+        new_id = create_mixtape(session["user"]["sub"], **fields, remixed_from_id=mixtape_id)
+
+        return redirect(url_for("view", mixtape_id=new_id))
+
+    return render_mixtape_editor("remix", url_for("remix", mixtape_id=mixtape_id), source)
+
+
+# Show the shared mixtape editor; mode is "create", "edit" or "remix"
+def render_mixtape_editor(mode, form_action, mixtape=None):
     return render_template(
         "add_mixtape.html",
-        name=user.get("name", "User"),
+        mode=mode,
+        form_action=form_action,
+        mixtape=mixtape,
+        name=session["user"].get("name", "User"),
         mixtape_tags=MIXTAPE_TAGS
     )
+
+
+# Check the editor form; returns (fields for create/update_mixtape, None) or (None, error response)
+def read_mixtape_form():
+    title = request.form.get("title", "").strip()
+    description = request.form.get("description", "").strip()
+
+    if not title or len(title) > 150:
+        return None, ("Title must be between 1 and 150 characters.", 400)
+
+    tags = [
+        tag for tag in request.form.getlist("tags") if tag in MIXTAPE_TAGS
+    ]
+
+    # Each song row submits a track_ids and an annotations value, in order.
+    # Keep the submitted order, drop duplicates.
+    annotations = {}
+    for track_id, note in zip_longest(
+        request.form.getlist("track_ids"),
+        request.form.getlist("annotations"),
+        fillvalue=""
+    ):
+        annotations.setdefault(track_id, note.strip() or None)
+    track_ids = list(annotations)
+
+    if len(track_ids) > MAX_TRACKS:
+        return None, (f"A mixtape can have at most {MAX_TRACKS} songs.", 400)
+
+    if not all(SPOTIFY_ID_PATTERN.fullmatch(t) for t in track_ids):
+        return None, ("Invalid song.", 400)
+
+    if any(note and len(note) > MAX_ANNOTATION_LENGTH for note in annotations.values()):
+        return None, (f"Song notes can be at most {MAX_ANNOTATION_LENGTH} characters.", 400)
+
+    try:
+        tracks = get_spotify_tracks(track_ids)
+        for track in tracks:
+            track["annotation"] = annotations[track["spotify_id"]]
+    except LookupError:
+        return None, ("One of the songs could not be found on Spotify.", 400)
+    except (requests.RequestException, KeyError, ValueError):
+        app.logger.exception("Spotify track lookup failed")
+        return None, ("Spotify is unavailable right now. Please try again.", 502)
+
+    fields = {"title": title, "description": description, "tags": tags, "tracks": tracks}
+    return fields, None
 
 
 # Redirecting just for compatibility - should work without this
@@ -264,11 +325,6 @@ def add():
     return redirect(url_for("create"))
 
 
-# Edit page (placeholder)
-@app.route("/edit")
-def edit():
-    return render_template("edit_mixtape.html")
-
 @app.route("/edit/<int:mixtape_id>/upload_cover", methods=["POST"])
 def upload_cover(mixtape_id):
     file = request.files["image"]
@@ -276,20 +332,6 @@ def upload_cover(mixtape_id):
     # filename = secure_filename(file.filename)
     filestream = file.read()
     cover_to_db(filestream, mixtape_id)
-
-
-# Remix page (placeholder)
-@app.route("/remix")
-@requires_auth
-def remix():
-    return render_template("remix_mixtape.html")
-
-
-# Manage your own mixtape (placeholder)
-@app.route("/my-mixtape", defaults={"mixtape_id": None})
-@app.route("/my-mixtape/<int:mixtape_id>")
-def my_mixtape(mixtape_id):
-    return render_template("my_mixtape.html", mixtape_id=mixtape_id)
 
 
 # Preview of the search results modal (frontend WIP)

@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
-{% block title %}Add Mixtape{% endblock %}
+{# Shared mixtape editor. mode is "create" (empty), "edit" (your mixtape) or "remix" (copy of someone's) #}
+{% block title %}{% if mode == "edit" %}Edit Mixtape{% elif mode == "remix" %}Remix Mixtape{% else %}Add Mixtape{% endif %}{% endblock %}
 
 {% block content %}
 
@@ -9,7 +10,7 @@
 
 <section>
 
-<form class="pure-form" id="mixtape-form" method="POST" action="{{ url_for('create') }}">
+<form class="pure-form" id="mixtape-form" method="POST" action="{{ form_action }}">
 
     <div class="profile-info">
         <div class="card" id="mixtape-cover">
@@ -17,7 +18,11 @@
         </div>
 
         <div>
-            <input type="text" name="title" class="mixtape-title-2" placeholder="Mixtape Title" maxlength="150" required>
+            <input type="text" name="title" class="mixtape-title-2" placeholder="Mixtape Title" maxlength="150" required value="{{ mixtape.title if mixtape }}">
+
+            {% if mode == "remix" %}
+            <p class="remix-note"><i class="fa-solid fa-code-branch"></i> Remixing "{{ mixtape.title }}" by {{ mixtape.creator_name }}. Saving creates your own copy.</p>
+            {% endif %}
 
             <div class="actions">
                 <p class="mixtape-owner">{{ name }}</p>
@@ -41,7 +46,7 @@
 
     <dialog id="add-description">
         <h4>Add a description</h4>
-        <textarea name="description" class="pure-input-1" rows="4" placeholder="What's this mixtape about?"></textarea>
+        <textarea name="description" class="pure-input-1" rows="4" placeholder="What's this mixtape about?">{{ mixtape.description or "" if mixtape }}</textarea>
         <div class="dialog-buttons">
             <button type="button" class="pure-button" commandfor="add-description" command="close">Done</button>
         </div>
@@ -51,7 +56,7 @@
         <h4>Add tags</h4>
         {% for tag in mixtape_tags %}
         <label for="tag-{{ tag }}" class="pure-checkbox">
-            <input id="tag-{{ tag }}" type="checkbox" name="tags" value="{{ tag }}"> {{ tag }}
+            <input id="tag-{{ tag }}" type="checkbox" name="tags" value="{{ tag }}" {% if mixtape and tag in mixtape.tags %}checked{% endif %}> {{ tag }}
         </label>
         {% endfor %}
         <div class="dialog-buttons">
@@ -129,10 +134,18 @@
 </div>
 
 <div style="text-align: right; padding: 20px 50px;">
-    <button type="submit" form="mixtape-form" class="pure-button login">Save</button>
+    {% if mixtape %}
+    <a href="{{ url_for('view', mixtape_id=mixtape.id) }}" class="pure-button button-cancel">Cancel</a>
+    {% endif %}
+    <button type="submit" form="mixtape-form" class="pure-button login">
+        {% if mode == "edit" %}Save changes{% elif mode == "remix" %}Save remix{% else %}Save{% endif %}
+    </button>
 </div>
 
 </section>
+
+<!-- Songs already in the mixtape (edit / remix); add_mixtape.js adds them to the list on load -->
+<script id="initial-songs" type="application/json">{{ (mixtape.tracks if mixtape else []) | tojson }}</script>
 
 <link rel="stylesheet" href="{{ url_for('static', filename='songs.css') }}">
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>

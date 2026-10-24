@@ -98,13 +98,13 @@
         
         <div class="actions pure-g">
             <div class="pure-u-9-24">
-                <div id="remix" class="remix-button"><a href="{{ url_for('remix')}}" style="color: black; text-decoration: none;"><i class="fa-solid fa-compact-disc"></i><span style="margin-left: 10px;">Remix</span></a></div>
+                <div id="remix" class="remix-button"><a href="{{ url_for('remix', mixtape_id=mixtape.id) }}" style="color: black; text-decoration: none;"><i class="fa-solid fa-compact-disc"></i><span style="margin-left: 10px;">Remix</span></a></div>
             </div>
             <div class="pure-u-9-24">
-                <div id="edit" class="remix-button"><a href="{{ url_for('my_mixtape', mixtape_id=mixtape.id) }}" style="color: black; text-decoration: none;"><i class="fa-regular fa-pen-to-square"></i><span style="margin-left: 10px;">Edit</span></a></div>
+                <div id="edit" class="remix-button"><a href="{{ url_for('edit', mixtape_id=mixtape.id) }}" style="color: black; text-decoration: none;"><i class="fa-regular fa-pen-to-square"></i><span style="margin-left: 10px;">Edit</span></a></div>
             </div>
             <div class="pure-u-1-24">
-                <button type="button" id="export" class="save icon-button"><i class="fa-solid fa-share"></i></button>
+                <a href="{{ url_for('export', mixtape_id=mixtape.id) }}" id="export" class="save icon-button" aria-label="Export mixtape" title="Download song list"><i class="fa-solid fa-share"></i></a>
             </div>
             <div class="pure-u-1-24">
                 <button type="button" class="save icon-button" command="show-modal" commandfor="delete-mixtape" aria-label="Delete mixtape"><i class="fa-solid fa-trash-can"></i></button>
@@ -136,10 +136,10 @@
         {% elif session.get("user") %}
         <div class="actions pure-g">
             <div class="pure-u-16-24">
-                <div id="remix" class="remix-button"><a href="{{ url_for('remix') }}" style="color: black; text-decoration: none;"><i class="fa-solid fa-compact-disc"></i><span style="margin-left: 10px;">Remix</span></a></div>
+                <div id="remix" class="remix-button"><a href="{{ url_for('remix', mixtape_id=mixtape.id) }}" style="color: black; text-decoration: none;"><i class="fa-solid fa-compact-disc"></i><span style="margin-left: 10px;">Remix</span></a></div>
             </div>
             <div class="pure-u-1-24">
-                <button type="button" id="export" class="save icon-button"><i class="fa-solid fa-share"></i></button>
+                <a href="{{ url_for('export', mixtape_id=mixtape.id) }}" id="export" class="save icon-button" aria-label="Export mixtape" title="Download song list"><i class="fa-solid fa-share"></i></a>
             </div>
             <div class="pure-u-1-24"></div>
             <div class="pure-u-1-24">
@@ -153,10 +153,12 @@
         {% else %}
         <div class="actions pure-g">
             <div class="pure-u-16-24">
-                <div id="remix" class="remix-button"><a href="{{ url_for('remix') }}" style="color: grey; text-decoration: none;"><i class="fa-solid fa-compact-disc"></i><span style="margin-left: 10px;">Remix</span></a></div>
+                <div id="remix" class="remix-button"><a href="{{ url_for('remix', mixtape_id=mixtape.id) }}" style="color: grey; text-decoration: none;"><i class="fa-solid fa-compact-disc"></i><span style="margin-left: 10px;">Remix</span></a></div>
             </div>
             <div class="pure-u-1-24">
-                <button type="button" id="export" class="save icon-button" onClick="window.location.href='{{ url_for('export', mixtape_id=mixtape_id) }}' ;"><i class="fa-solid fa-share"></i></button>
+                <a href="{{ url_for('export', mixtape_id=mixtape.id) }}" id="export" class="save icon-button" aria-label="Export mixtape"><i class="fa-solid fa-share"></i></a>
+
+                <!-- <a href="{{ url_for('export', mixtape_id=mixtape.id) }}" id="export" class="save icon-button" aria-label="Export mixtape" title="Download song list"><i class="fa-solid fa-share"></i></a> -->
             </div>
             <div class="pure-u-1-24"></div>
             <div class="pure-u-1-24">

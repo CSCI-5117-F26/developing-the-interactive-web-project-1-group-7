@@ -1,4 +1,4 @@
-// Create-mixtape page: search Spotify without reloading the page, add songs to the mixtape, reorder them by dragging, and submit them with the form.
+// Mixtape editor (create, edit and remix): search Spotify without reloading the page, add songs to the mixtape, reorder them by dragging, and submit them with the form.
 // Each selected song row holds hidden inputs (track_ids, annotations), so the order of rows on the page is the order the server saves.
 
 const searchForm = document.getElementById("song-search");
@@ -58,6 +58,7 @@ function addSong(track) {
     fillSong(row, track);
     row.querySelector('input[name="track_ids"]').value = track.spotify_id;
     row.querySelector(".song-duration").textContent = formatDuration(track.duration_ms);
+    row.querySelector(".song-note-input").value = track.annotation || "";
     row.querySelector(".remove-song").addEventListener("click", () => {
         row.remove();
         refreshSelectedState();
@@ -162,5 +163,8 @@ new Sortable(selectedSongs, {
     handle: ".drag-handle",
     forceFallback: true,
 });
+
+// When editing or remixing, start with the mixtape's existing songs and notes
+JSON.parse(document.getElementById("initial-songs").textContent).forEach(addSong);
 
 refreshSelectedState();
