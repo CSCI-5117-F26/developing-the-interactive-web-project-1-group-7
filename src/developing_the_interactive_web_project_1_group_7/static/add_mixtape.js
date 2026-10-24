@@ -157,14 +157,14 @@ tagCheckboxes.forEach((box) => box.addEventListener("change", refreshTagPreview)
 refreshDescriptionPreview();
 refreshTagPreview();
 
+// When editing or remixing, start with the mixtape's existing songs and notes.
+// Done before Sortable so the songs still show (and aren't lost on save) if the Sortable CDN fails to load.
+JSON.parse(document.getElementById("initial-songs").textContent).forEach(addSong);
+refreshSelectedState();
+
 // Using Sortable's mouse/touch dragging instead of native HTML5 drag-and-drop, which behaves differently across browsers and doesn't work on phones
 new Sortable(selectedSongs, {
     animation: 150,
     handle: ".drag-handle",
     forceFallback: true,
 });
-
-// When editing or remixing, start with the mixtape's existing songs and notes
-JSON.parse(document.getElementById("initial-songs").textContent).forEach(addSong);
-
-refreshSelectedState();
