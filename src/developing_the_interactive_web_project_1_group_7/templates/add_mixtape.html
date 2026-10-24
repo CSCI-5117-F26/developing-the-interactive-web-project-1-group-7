@@ -24,10 +24,17 @@
 
             <div class="filters">
                 <ul>
-                    <li><button type="button" class="pure-button" command="show-modal" commandfor="add-description"><i class="fa-regular fa-pen-to-square"></i> Add Description</button></li>
-                    <li><button type="button" class="pure-button" command="show-modal" commandfor="add-tag"><i class="fa-solid fa-plus"></i> Add tag</button></li>
+                    <li><button type="button" class="pure-button" command="show-modal" commandfor="add-description"><i class="fa-regular fa-pen-to-square"></i> <span id="description-button-label">Add Description</span></button></li>
+                    <li><button type="button" class="pure-button" command="show-modal" commandfor="add-tag"><i class="fa-solid fa-plus"></i> <span id="tag-button-label">Add tag</span></button></li>
                 </ul>
             </div>
+            </div>
+
+            <!-- Live preview of the description and tags chosen in the dialogs -->
+             <!-- Needs  polish -->
+            <p id="description-preview" class="mixtape-desc description-preview" hidden></p>
+            <div class="filters tag-preview">
+                <ul id="tag-preview"></ul>
             </div>
         </div>
     </div>
@@ -52,68 +59,83 @@
         </div>
     </dialog>
 
-    {% if songs %}
-    <div style="padding: 20px 50px;">
-        {% for song in songs %}
-            {% include "./components/songs_edit.html" %}
-        {% endfor %}
+    <!-- Songs added from the search below. Each row carries hidden track_ids /
+         annotations inputs, so the DOM order is the order saved to the database. -->
+    <div class="selected-songs-wrapper">
+        <p id="no-songs" class="empty-songs">No songs yet. Search Spotify below and click Add.</p>
+        <div id="selected-songs"></div>
     </div>
-    {% endif %}
 
 </form>
+
+<template id="selected-song-template">
+    <div class="pure-g song selected-song">
+        <input type="hidden" name="track_ids">
+        <div class="pure-u-2-24">
+            <button type="button" class="icon-button remove-song" aria-label="Remove song"><i class="fa-solid fa-minus"></i></button>
+        </div>
+        <div class="pure-u-4-24">
+            <img class="song-img" alt="">
+        </div>
+        <div class="pure-u-12-24">
+            <h5 class="song-title"></h5>
+            <div class="song-meta">
+                <p class="song-artist"></p>
+                <p class="song-album"></p>
+            </div>
+        </div>
+        <div class="pure-u-2-24">
+            <p class="song-duration"></p>
+        </div>
+        <div class="pure-u-2-24">
+            <i class="fa-solid fa-bars drag-handle" aria-label="Drag to reorder"></i>
+        </div>
+
+        <div class="pure-u-6-24"></div>
+        <div class="pure-u-18-24">
+            <input type="text" name="annotations" class="song-note-input" maxlength="300" placeholder="Add a note about why this song is here (optional)">
+        </div>
+    </div>
+</template>
+
+<template id="search-result-template">
+    <div class="pure-g song">
+        <div class="pure-u-4-24">
+            <img class="song-img" alt="">
+        </div>
+        <div class="pure-u-16-24">
+            <h5 class="song-title"></h5>
+            <div class="song-meta">
+                <p class="song-artist"></p>
+                <p class="song-album"></p>
+            </div>
+        </div>
+        <div class="pure-u-4-24">
+            <button type="button" class="pure-button login add-song">Add</button>
+        </div>
+    </div>
+</template>
 
 <h2>Find the songs from Spotify</h2>
 
 <div style="padding: 0 50px;">
-    <form class="pure-form" action="{{ url_for('track_search') }}" method="POST" name="search">
-        <input id="q" name="q" type="text" required="" placeholder="Search song..."/>
+    <form class="pure-form" id="song-search" action="{{ url_for('search_spotify_tracks') }}" method="GET">
+        <input id="q" name="q" type="text" required maxlength="100" placeholder="Search song..."/>
         <button type="submit" class="pure-button login">Search</button>
     </form>
 
-    {% if results %}
-        {% for item in results["tracks"]["items"] %}
-            <div class="pure-g song">
-                <div class="pure-u-4-24">
-                    <img class="song-img" src="{{item['album']['images'][2]['url']}}">
-                </div>
-                <div class="pure-u-16-24">
-                    <h5>{{item["name"]}}</h5>
-                    <div class="song-meta">
-                        <p>{{item["artists"][0]["name"]}}</p>
-                        <p>{{item["album"]["name"]}}</p>
-                    </div>
-                </div>
-                <div class="pure-u-4-24">
-                    <button type="button" class="pure-button login">Add</button>
-                </div>
-            </div>
-        {% endfor %}
-
-    {% endif %}
-
-    <!-- {% for i in range(2) %}
-    <div class="pure-g song">
-        <div class="pure-u-4-24">
-            <img class="song-img" src="" alt="Song's Cover Image">
-        </div>
-        <div class="pure-u-16-24">
-            <h5>Song Title</h5>
-            <div class="song-meta">
-                <p>Artist</p>
-                <p>Album</p>
-            </div>
-        </div>
-        <div class="pure-u-4-24">
-            <button type="button" class="pure-button login">Add</button>
-        </div>
-    </div>
-    {% endfor %} -->
-</div> 
+    <p id="search-status" class="search-status" aria-live="polite"></p>
+    <div id="search-results"></div>
+</div>
 
 <div style="text-align: right; padding: 20px 50px;">
     <button type="submit" form="mixtape-form" class="pure-button login">Save</button>
 </div>
 
 </section>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='songs.css') }}">
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
+<script src="{{ url_for('static', filename='add_mixtape.js') }}"></script>
 
 {% endblock %}

@@ -33,6 +33,57 @@
     cursor: pointer;
 }
 
+.description-preview {
+    max-width: 600px;
+    margin: 0 0 12px 0;
+    white-space: pre-line;
+}
+
+.filters.tag-preview {
+    padding: 0;
+}
+
+.tag-preview .pure-button {
+    cursor: default;
+}
+
+.selected-songs-wrapper {
+    padding: 20px 50px;
+}
+
+.selected-song {
+    padding: 10px 0;
+}
+
+.empty-songs,
+.search-status {
+    color: #cccccc;
+    font-size: 15px;
+}
+
+.icon-button {
+    background: none;
+    border: none;
+    color: inherit;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.drag-handle {
+    cursor: grab;
+}
+
+.pure-form .song-note-input {
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 4px;
+}
+
+.song .add-song:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
 .song-note {
     margin-top: 4px;
     padding-left: 14px;
