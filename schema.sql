@@ -88,6 +88,16 @@ CREATE TABLE mixtape_likes (
     PRIMARY KEY (user_id, mixtape_id)
 );
 
+-- 8. IMAGES
+CREATE TABLE images (
+    image_id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL
+        REFERENCES users(auth0_id),
+    mixtape_id BIGINT NOT NULL
+        REFERENCES mixtapes(id) on DELETE CASCADE,
+    stream BYTEA
+);
+
 -- Might be useful by making certain reads faster
 -- INDEXES
 CREATE INDEX idx_mixtapes_creator

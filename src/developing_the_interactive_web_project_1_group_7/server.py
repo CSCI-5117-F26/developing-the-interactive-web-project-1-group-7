@@ -327,11 +327,12 @@ def add():
 
 @app.route("/edit/<int:mixtape_id>/upload_cover", methods=["POST"])
 def upload_cover(mixtape_id):
+    user_id = session["user"]
     file = request.files["image"]
     # maybe not needed?
     # filename = secure_filename(file.filename)
     filestream = file.read()
-    cover_to_db(filestream, mixtape_id)
+    cover_to_db(filestream, user_id, mixtape_id)
 
 
 # Preview of the search results modal (frontend WIP)
