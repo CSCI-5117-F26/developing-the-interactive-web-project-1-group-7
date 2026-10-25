@@ -45,7 +45,8 @@
   display: flex;
   justify-content: center;
   align-items: center;">
-                    <img src="/static/images/mixtape-cover.png" alt="mixtape cover" style="width: 85%;">
+                    <!-- <img src="/static/images/mixtape-cover.png" alt="mixtape cover" style="width: 85%;"> -->
+                    <img src="{{ mixtape.cover_image_url or "/static/images/mixtape-cover.png" }}" alt="mixtape cover" style="width: 85%;">
                 </div>
             </div>
         </div>
