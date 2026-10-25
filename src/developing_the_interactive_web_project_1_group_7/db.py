@@ -326,7 +326,6 @@ def delete_mixtape(user_id, mixtape_id):
 def cover_to_db(filestream, user_id, mixtape_id):
     with get_db_connection() as conn:
         with conn.cursor() as cur:
-            # TODO
             cur.execute(
                 """
                 INSERT INTO images (user_id, mixtape_id, stream)
@@ -335,6 +334,18 @@ def cover_to_db(filestream, user_id, mixtape_id):
                 (user_id, mixtape_id, filestream)
             )
             conn.commit()
+
+def get_cover(mixtape_id):
+    with get_db_connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    SELECT 1 FROM images
+                    WHERE mixtape_id = %s
+                    """,
+                    (mixtape_id)
+                )
+                return cur.fetchone()
 
 
 # Note to dev

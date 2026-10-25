@@ -325,7 +325,7 @@ def add():
     return redirect(url_for("create"))
 
 
-@app.route("/edit/<int:mixtape_id>/upload_cover", methods=["POST"])
+@app.route("/mixtape/<int:mixtape_id>/edit/upload_cover", methods=["POST"])
 def upload_cover(mixtape_id):
     user_id = session["user"]
     file = request.files["image"]
