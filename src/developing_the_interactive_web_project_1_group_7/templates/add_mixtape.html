@@ -14,7 +14,13 @@
 
     <div class="profile-info">
         <div class="card" id="mixtape-cover">
+            <!-- <img id="mixtape-cover-img" src="/static/images/mixtape-cover.png" alt="mixtape cover" width="200"> -->
+             
+            {% if mixtape.cover_image_url %}
+            <img id="mixtape-cover-img" class="album-cover" src="{{ mixtape.cover_image_url }}" alt="{{ mixtape.title }} cover">
+            {% else %}
             <img id="mixtape-cover-img" src="/static/images/mixtape-cover.png" alt="mixtape cover" width="200">
+            {% endif %}
         </div>
 
         <div>

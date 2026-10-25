@@ -55,10 +55,11 @@
     <div class="pure-u-1 pure-u-md-1-4 left-side">
         <div class="card" id="mixtape-cover">
             {% if is_owner %}
-            <form method="post" action="{{url_for('upload_cover', mixtape_id=mixtape.id)}}" enctype="multipart/form-data">
+            <button type="button" command="show-modal" commandfor="change-cover" aria-label="Change cover" style="background: none; border: none; padding: 0; width: 100%; height: 100%; cursor: pointer;">
+            <!-- <form method="post" action="{{url_for('upload_cover', mixtape_id=mixtape.id)}}" enctype="multipart/form-data">
                 <input name="image" type="file" accept="image/*">
                 <button type="submit" command="show-modal" commandfor="change-cover" aria-label="Change cover" style="background: none; border: none; padding: 0; width: 100%; height: 100%; cursor: pointer;">
-            </form>
+            </form> -->
             {% endif %}
             {% if mixtape.cover_image_url %}
             <img id="mixtape-cover-img" class="album-cover" src="{{ mixtape.cover_image_url }}" alt="{{ mixtape.title }} cover">
@@ -119,19 +120,20 @@
             <p>Are you sure you want to delete "{{ mixtape.title }}" from your library?</p>
             <form method="POST" action="/mixtape/{{ mixtape.id }}/delete" class="dialog-buttons">
                 <button type="button" class="pure-button button-cancel" commandfor="delete-mixtape" command="close">Cancel</button>
-                <button type="submit" class="pure-button button-confirm">Delete</button>
+                <button type="submit" class="pure-button button-confirm-blue">Delete</button>
             </form>
         </dialog>
 
         <dialog id="change-cover">
             <h4>Change cover</h4>
-            <form method="POST" action="/mixtape/{{ mixtape.id }}/cover" enctype="multipart/form-data">
+            <form method="POST" action="{{ url_for('upload_cover', mixtape_id=mixtape.id) }}" enctype="multipart/form-data">
+            <!-- <form method="POST" action="/mixtape/{{ mixtape.id }}/cover" enctype="multipart/form-data"> -->
                 <img id="cover-preview" src="{{ mixtape.cover_image_url or '/static/images/mixtape-cover.png' }}" alt="cover preview" width="200">
                 <br>
                 <input id="cover-input" name="image" type="file" accept="image/*">
                 <div class="dialog-buttons">
                     <button type="button" class="pure-button button-cancel" commandfor="change-cover" command="close">Cancel</button>
-                    <button type="submit" class="pure-button button-confirm">Save</button>
+                    <button type="submit" class="pure-button button-confirm-blue">Save</button>
                 </div>
             </form>
         </dialog>

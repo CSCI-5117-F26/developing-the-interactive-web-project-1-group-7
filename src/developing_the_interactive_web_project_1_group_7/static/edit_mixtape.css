@@ -220,6 +220,10 @@ dialog p {
     background-color: #FF7878;
 }
 
+.button-confirm-blue {
+    background-color: #78b5ff;
+}
+
 .stats {
     display: flex;
     flex-wrap: wrap;
