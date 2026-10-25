@@ -79,6 +79,14 @@
 
 </form>
 
+<dialog id="delete-song">
+    <h4>Remove this Song?</h4>
+    <p>Are you sure you want to remove "{{ mixtape.title }}" from this mixtape?</p>
+    <form method="POST" action="/mixtape/{{ mixtape.id }}/delete" class="dialog-buttons">
+        <button type="button" class="pure-button button-cancel" commandfor="delete-mixtape" command="close">Cancel</button>
+        <button type="submit" class="pure-button button-confirm">Delete</button>
+    </form>
+</dialog>
 <template id="selected-song-template">
     <div class="pure-g song selected-song">
         <input type="hidden" name="track_ids">

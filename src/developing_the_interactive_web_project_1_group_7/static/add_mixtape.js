@@ -9,6 +9,10 @@ const selectedSongs = document.getElementById("selected-songs");
 const noSongs = document.getElementById("no-songs");
 const resultTemplate = document.getElementById("search-result-template");
 const selectedTemplate = document.getElementById("selected-song-template");
+const removeSongDialog = document.getElementById("remove-song");
+const removeSongTitle = document.getElementById("remove-song-title");
+const confirmRemoveSong = document.getElementById("confirm-remove-song");
+let songToRemove = null;
 
 const MAX_TRACKS = 50;
 
@@ -59,14 +63,28 @@ function addSong(track) {
     row.querySelector('input[name="track_ids"]').value = track.spotify_id;
     row.querySelector(".song-duration").textContent = formatDuration(track.duration_ms);
     row.querySelector(".song-note-input").value = track.annotation || "";
+    // row.querySelector(".remove-song").addEventListener("click", () => {
+    //     row.remove();
+    //     refreshSelectedState();
+    // });
+
+    // adding confirm modal
     row.querySelector(".remove-song").addEventListener("click", () => {
-        row.remove();
-        refreshSelectedState();
+        songToRemove = row;
+        removeSongTitle.textContent = track.title;
+        removeSongDialog.showModal();
     });
 
     selectedSongs.appendChild(row);
     refreshSelectedState();
 }
+
+// if confirm
+confirmRemoveSong.addEventListener("click", () => {
+    songToRemove.remove();
+    refreshSelectedState();
+    removeSongDialog.close();
+});
 
 function showResults(tracks) {
     searchResults.replaceChildren();
