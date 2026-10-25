@@ -1,10 +1,16 @@
 .song {
     align-items: center;
+    padding: 5px 0;
+    border-radius: 10px;
+}
+
+.song:hover {
+    background-color: #303030;
 }
 
 .song-img {
     display: block;
-    width: 60%;
+    width: 80%;
     max-width: 120px;
     object-fit: cover;
     border-radius: 8px;
@@ -12,15 +18,18 @@
 }
 
 .song h5 {
-    margin-bottom: 6px;
-    font-size: 15px;
-    font-weight: 700;
+    margin: 0 0 6px;
 }
 
 .song-meta {
     display: flex;
     gap: 24px;
     font-size: 15px;
+    flex-wrap: wrap;
+}
+
+.song-meta {
+    margin: 0;
 }
 
 .song .pure-u-2-24 {

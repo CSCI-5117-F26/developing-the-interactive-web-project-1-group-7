@@ -1,8 +1,9 @@
 .card {
     background-color: white;
     border-radius: 15px;
-    height: 35vh;
-    width: 35vh;
+    width: 100%;
+    max-width: 35vh;
+    aspect-ratio: 1 / 1;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -22,7 +23,7 @@
 
 .left-side {
     box-sizing: border-box;
-    padding: 20px 0 20px 40px;
+    padding: 20px clamp(15px, 3%, 40px);
 }
  
  
@@ -82,9 +83,12 @@
  
 .actions {
     align-items: center;
-    margin-bottom: 15px;
     display: flex;
     gap: 15px;
+}
+
+.actions > div {
+    width: auto;
 }
  
 #remix {
@@ -121,7 +125,7 @@
 
 .right-side {
     box-sizing: border-box;
-    padding: 50px 80px 20px 120px;
+    padding: 40px clamp(15px, 5%, 80px);
 }
 
 .modal {
@@ -214,4 +218,14 @@ dialog p {
 
 .button-confirm {
     background-color: #FF7878;
+}
+
+.stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.stats > div {
+    width: auto;
 }
