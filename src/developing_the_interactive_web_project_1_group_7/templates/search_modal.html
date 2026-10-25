@@ -7,13 +7,22 @@
 <style>
 
 .search-card {
-  background-color: #FDF8F7;
-  color: black;
-  border-radius: 8px;
+  background-color: #303030;
+  color: white;
+  border-radius: 25px;
   padding: 20px;
-  margin-top: 4px;
   max-height: 70vh;
   overflow-y: auto;
+}
+
+.search-card > h3 {
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.search-block {
+    padding-top: 20px;
+    box-sizing: border-box;
 }
 
 </style>
@@ -23,15 +32,15 @@
 <div class="pure-u-4-24">
 
   </div>
-  <div class="pure-u-16-24">
+  <div class="pure-u-16-24 search-block">
 <div class="search-card">
-<h3 style="color: black;">Showing results for "{{ query }}"</h3>
+<h3 style="color: white;">Showing results for "{{ query }}"</h3>
 
     {% for mixtape in results %}
     <a href="{{ url_for('view', mixtape_id=mixtape.id) }}" style="text-decoration: none;">
-    <div class="pure-g" style="background-color: #E6E6E6; margin-bottom: 10px;">
+    <div class="pure-g" style="background-color: #404040; margin-bottom: 10px; border-radius: 20px;">
         <div class="pure-u-5-24">
-            <div style="background-color: grey; border-radius: 15px; margin: 10px; width: 90px; height: 90px;"> 
+            <div style="background-color: white; border-radius: 15px; margin: 10px; width: 90px; height: 90px;"> 
                 <div style="height: 100%;
   display: flex;
   justify-content: center;
@@ -42,20 +51,20 @@
         </div>
         <div class="pure-u-17-24">
             <div>
-                <h3 style="color: black;">{{ mixtape.title }}</h3>
+                <h3 style="color: white;">{{ mixtape.title }}</h3>
                 <div class="pure-g">
-                    <div class="pure-u-1-3" style="color: black;"><span>by {{ mixtape.creator_name }}</span></div>
-                    <div class="pure-u-1-3" style="color: black;"><span>{{ mixtape.track_count }} Tracks</span></div>
-                    <div class="pure-u-1-3" style="color: black;"><span>{{ mixtape.saved_count }} Saved</span></div>
+                    <div class="pure-u-1-3" style="color: white;"><span>by {{ mixtape.creator_name }}</span></div>
+                    <div class="pure-u-1-3" style="color: white;"><span>{{ mixtape.track_count }} Tracks</span></div>
+                    <div class="pure-u-1-3" style="color: white;"><span>{{ mixtape.saved_count }} Saved</span></div>
                 </div>
-                <p style="color: black;">{{ mixtape.description or "" }}</p>
+                <p style="color: white;">{{ mixtape.description or "" }}</p>
             </div>
         </div>
 
     </div>
     </a>
     {% else %}
-    <p style="color: black;">No mixtapes found.</p>
+    <p style="color: white;">No mixtapes found.</p>
     {% endfor %}
 </div>
   </div>
