@@ -25,6 +25,14 @@
     box-sizing: border-box;
 }
 
+.search-result {
+    background-color: #404040;
+}
+
+.search-result:hover {
+    background-color: #505050;
+}
+
 </style>
 <section>
 
@@ -38,7 +46,7 @@
 
     {% for mixtape in results %}
     <a href="{{ url_for('view', mixtape_id=mixtape.id) }}" style="text-decoration: none;">
-    <div class="pure-g" style="background-color: #404040; margin-bottom: 10px; border-radius: 20px;">
+    <div class="pure-g search-result" style="margin-bottom: 10px; border-radius: 20px;">
         <div class="pure-u-5-24">
             <div style="background-color: white; border-radius: 15px; margin: 10px; width: 90px; height: 90px;"> 
                 <div style="height: 100%;
