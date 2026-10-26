@@ -146,6 +146,18 @@ const tagCheckboxes = document.querySelectorAll('input[name="tags"]');
 const tagPreview = document.getElementById("tag-preview");
 const tagButtonLabel = document.getElementById("tag-button-label");
 
+const titleInput = document.querySelector('input[name="title"]');
+const titlePreview = document.getElementById("title-preview");
+
+function refreshTitlePreview() {
+    const title = titleInput.value.trim();
+    if (title) {
+        titlePreview.textContent = title;
+    } else {
+        titlePreview.textContent = "Mixtape Title";
+    }
+}
+
 function refreshDescriptionPreview() {
     const description = descriptionInput.value.trim();
 
@@ -184,13 +196,16 @@ function refreshTagPreview() {
         tagPreview.style.color = "";
     }
 
-    tagButtonLabel.textContent = checked.length ? "Edit tags" : "Add tag";
+    // tagButtonLabel.textContent = checked.length ? "Edit tags" : "Add tag";
 }
 
 descriptionInput.addEventListener("input", refreshDescriptionPreview);
 tagCheckboxes.forEach((box) => box.addEventListener("change", refreshTagPreview));
 refreshDescriptionPreview();
 refreshTagPreview();
+
+titleInput.addEventListener("input", refreshTitlePreview);
+refreshTitlePreview();
 
 // When editing or remixing, start with the mixtape's existing songs and notes.
 // Done before Sortable so the songs still show (and aren't lost on save) if the Sortable CDN fails to load.
