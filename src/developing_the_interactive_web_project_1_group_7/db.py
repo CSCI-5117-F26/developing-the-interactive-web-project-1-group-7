@@ -331,7 +331,7 @@ def cover_to_db(filestream, user_id, mixtape_id):
                 INSERT INTO images (user_id, mixtape_id, stream)
                 VALUES (%s, %s, %s)
                 """,
-                (user_id, mixtape_id, filestream)
+                (user_id, mixtape_id, psycopg.Binary(filestream))
             )
             conn.commit()
 

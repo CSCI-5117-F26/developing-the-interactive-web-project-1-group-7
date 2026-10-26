@@ -327,7 +327,7 @@ def add():
 
 @app.route("/mixtape/<int:mixtape_id>/edit/upload_cover", methods=["POST"])
 def upload_cover(mixtape_id):
-    user_id = session["user"]
+    user_id = session["user"]["id"]
     file = request.files["image"]
     # maybe not needed?
     # filename = secure_filename(file.filename)
@@ -386,7 +386,7 @@ def delete(mixtape_id):
 def search_spotify_tracks():
     query = request.args.get("q", "").strip()
 
-    if not query:
+    if not query or len(query) == 0:
         return {"tracks": []}
 
     if len(query) > 100:
