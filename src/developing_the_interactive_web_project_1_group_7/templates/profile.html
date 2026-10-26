@@ -4,19 +4,33 @@
 {% block content %}
 
 <link rel="stylesheet" href="{{ url_for('static', filename='profile.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='edit_mixtape.css') }}">
 
 <div class="profile-info">
     <i class="fa-solid fa-circle-user"></i>
 
     <div>
-        <h2>{{ name }}</h2>
-        <!-- <button class="pure-button">Logout</button> -->
+        <h2>{{ username }}</h2>
+        <a href="{{ url_for('edit_profile') }}" class="pure-button">
+            <i class="fa-regular fa-pen-to-square"></i> Edit profile
+        </a>
         <a href="{{ url_for('logout') }}" class="pure-button">
             Logout
         </a>
-        <!-- <button class="pure-button">Settings</button> -->
+        <button type="button" class="pure-button delete-account" command="show-modal" commandfor="delete-account">
+            Delete account
+        </button>
     </div>
 </div>
+
+<dialog id="delete-account">
+    <h4>Delete your account?</h4>
+    <p>This permanently deletes your mixtapes, your saved mixtapes and your username. It can't be undone.</p>
+    <form method="POST" action="{{ url_for('delete_my_account') }}" class="dialog-buttons">
+        <button type="button" class="pure-button button-cancel" commandfor="delete-account" command="close">Cancel</button>
+        <button type="submit" class="pure-button button-confirm">Delete account</button>
+    </form>
+</dialog>
 
 <h2>My Mixtapes</h2>
 <div class="mixtape-prof" style="scrollbar-width: none; -ms-overflow-style: none;">
