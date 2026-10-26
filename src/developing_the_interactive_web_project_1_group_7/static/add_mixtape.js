@@ -131,27 +131,36 @@ searchForm.addEventListener("submit", async (event) => {
     }
 });
 
+// Enter in a note field shouldn't save the whole mixtape
 selectedSongs.addEventListener("keydown", (event) => {
     if (event.key === "Enter" && event.target.matches(".song-note-input")) {
         event.preventDefault();
     }
 });
 
-const titleInput = document.querySelector('input[name="title"]');
-const titlePreview = document.getElementById("title-preview");
+// Show the description and tags on the page as soon as they're chosen in the dialogs, before the mixtape is saved
 const descriptionInput = document.querySelector('textarea[name="description"]');
 const descriptionPreview = document.getElementById("description-preview");
+const descriptionButtonLabel = document.getElementById("description-button-label");
 const tagCheckboxes = document.querySelectorAll('input[name="tags"]');
 const tagPreview = document.getElementById("tag-preview");
-
-function refreshTitlePreview() {
-    titlePreview.textContent = titleInput.value.trim() || "Mixtape Title";
-}
+const tagButtonLabel = document.getElementById("tag-button-label");
 
 function refreshDescriptionPreview() {
     const description = descriptionInput.value.trim();
-    descriptionPreview.textContent = description || "Add a description";
-    descriptionPreview.style.color = description ? "" : "#cccccc";
+
+    if (description) {
+        descriptionPreview.textContent = description;
+        descriptionPreview.style.color = "";
+    } else {
+        descriptionPreview.textContent = "No description yet";
+        descriptionPreview.style.color = "#cccccc";
+    }
+
+    // changed the edit/add btn to just pencil icon
+    // descriptionPreview.textContent = description;
+    // descriptionPreview.hidden = !description;
+    // descriptionButtonLabel.textContent = description ? "Edit Description" : "Add Description";
 }
 
 function refreshTagPreview() {
@@ -168,24 +177,20 @@ function refreshTagPreview() {
         tagPreview.appendChild(item);
     }
 
-    if (!checked.length) {
-        tagPreview.textContent = "Add tags";
+    if (checked.length === 0) {
+        tagPreview.textContent = "No tags yet";
         tagPreview.style.color = "#cccccc";
     } else {
         tagPreview.style.color = "";
     }
+
+    tagButtonLabel.textContent = checked.length ? "Edit tags" : "Add tag";
 }
 
-titleInput.addEventListener("input", refreshTitlePreview);
 descriptionInput.addEventListener("input", refreshDescriptionPreview);
 tagCheckboxes.forEach((box) => box.addEventListener("change", refreshTagPreview));
-refreshTitlePreview();
 refreshDescriptionPreview();
 refreshTagPreview();
-
-titleInput.addEventListener("invalid", () => {
-    document.getElementById("edit-title").showModal();
-});
 
 // When editing or remixing, start with the mixtape's existing songs and notes.
 // Done before Sortable so the songs still show (and aren't lost on save) if the Sortable CDN fails to load.

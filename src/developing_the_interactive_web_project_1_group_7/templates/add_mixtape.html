@@ -139,6 +139,14 @@
         <!-- Songs added from the search below. Each row carries hidden track_ids /
              annotations inputs (form="mixtape-form"), so the DOM order is the order saved to the database. -->
         <div class="selected-songs-wrapper pure-form">
+            <!-- <p id="no-songs" class="empty-songs">No songs yet. Search Spotify below and click Add.</p> -->
+            <div class="pure-g song-header">
+                <div class="pure-u-2-24"></div>
+                <div class="pure-u-4-24"></div>
+                <div class="pure-u-12-24">Song / Artist</div>
+                <div class="pure-u-2-24"><i class="fa-regular fa-clock" aria-label="Duration"></i></div>
+                <div class="pure-u-2-24"></div>
+            </div>
             <p id="no-songs" class="empty-songs">No songs yet. Search Spotify below and click Add.</p>
             <div id="selected-songs"></div>
         </div>
