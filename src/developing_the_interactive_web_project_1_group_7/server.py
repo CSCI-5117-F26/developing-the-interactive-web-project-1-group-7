@@ -14,7 +14,11 @@ from flask import Flask, abort, redirect, request, render_template, send_file, s
 from werkzeug.utils import secure_filename
 
 from .db import (
-    save_user,
+    get_or_create_account,
+    get_user,
+    is_username_available,
+    set_username,
+    delete_account,
     create_mixtape,
     update_mixtape,
     list_mixtapes,
@@ -38,9 +42,14 @@ app = Flask(__name__)
 MIXTAPE_TAGS = ["late-night", "morning", "sleepy", "chill", "pop", "alternative", "heartbreak", "study", "driving", "workout", "party", "getting-ready"]
 
 MAX_TRACKS = 50
-MAX_ANNOTATION_LENGTH = 300
+MAX_DESCRIPTION_LENGTH = 500
+MAX_ANNOTATION_LENGTH = 110
 SPOTIFY_ID_PATTERN = re.compile(r"[A-Za-z0-9]{22}")
 SPOTIFY_SEARCH_LIMIT = 10
+USERNAME_PATTERN = re.compile(r"[A-Za-z0-9_]{3,20}")
+
+# Pages a logged-in user can reach before picking a username
+USERNAME_NOT_NEEDED = {"choose_username", "username_available", "logout", "login", "signup", "callback", "static"}
 
 app.secret_key = os.environ["FLASK_SECRET_KEY"]
 
@@ -77,6 +86,22 @@ def requires_auth(f):
     return decorated
 
 
+# Before every request: drop logins saved in the old session format, and send users without a username to pick one
+@app.before_request
+def check_session():
+    user = session.get("user")
+    if user is None:
+        return
+
+    # Sessions from before account linking stored Auth0's login id, not our account id
+    if "id" not in user:
+        session.clear()
+        return
+
+    if not user.get("username") and request.endpoint not in USERNAME_NOT_NEEDED:
+        return redirect(url_for("choose_username"))
+
+
 # Login
 @app.route("/login")
 def login():
@@ -94,16 +119,25 @@ def signup():
     )
 
 
-# Validate the Auth0 login response and save the user
+# Validate the Auth0 login response and log in to the matching Mixtape account
 @app.route("/callback")
 def callback():
     token = oauth.auth0.authorize_access_token()
-
-    user = dict(token["userinfo"])
-    save_user(user)
+    userinfo = dict(token["userinfo"])
 
     session.clear()
-    session["user"] = user
+
+    # Email/password accounts must click the verification link before they can log in
+    if not userinfo.get("email_verified"):
+        return render_template("verify_email.html", email=userinfo.get("email")), 403
+
+    account = get_or_create_account(userinfo)
+
+    # Only our own account id and username are kept in the session
+    session["user"] = {"id": account["id"], "username": account["username"]}
+
+    if not account["username"]:
+        return redirect(url_for("choose_username"))
 
     return redirect(url_for("home"))
 
@@ -148,10 +182,93 @@ def profile():
 
     return render_template(
         "profile.html",
-        name=user.get("name", "User"),
-        my_mixtapes=list_user_mixtapes(user["sub"]),
-        saved_mixtapes=list_saved_mixtapes(user["sub"])
+        username=user["username"],
+        my_mixtapes=list_user_mixtapes(user["id"]),
+        saved_mixtapes=list_saved_mixtapes(user["id"])
     )
+
+
+# Pick a username after the first login (required before using the site)
+@app.route("/welcome/username", methods=["GET", "POST"])
+@requires_auth
+def choose_username():
+    user = session["user"]
+    if user.get("username"):
+        return redirect(url_for("home"))
+
+    if request.method == "POST":
+        error = save_username(user["id"], request.form.get("username", ""))
+        if error:
+            return render_template("username.html", mode="choose", username=request.form.get("username", ""), error=error), 400
+
+        return redirect(url_for("home"))
+
+    account = get_user(user["id"])
+    return render_template("username.html", mode="choose", username=suggest_username(account["name"] if account else ""))
+
+
+# Edit profile: change your username
+@app.route("/profile/edit", methods=["GET", "POST"])
+@requires_auth
+def edit_profile():
+    user = session["user"]
+
+    if request.method == "POST":
+        error = save_username(user["id"], request.form.get("username", ""))
+        if error:
+            return render_template("username.html", mode="edit", username=request.form.get("username", ""), current_username=user["username"], error=error), 400
+
+        return redirect(url_for("profile"))
+
+    return render_template("username.html", mode="edit", username=user["username"], current_username=user["username"])
+
+
+# Delete your account and everything in it, then log out
+@app.route("/profile/delete", methods=["POST"])
+@requires_auth
+def delete_my_account():
+    delete_account(session["user"]["id"])
+    app.logger.info("account deleted")
+    return redirect(url_for("logout"))
+
+
+# Live check while typing on the username page: is it the right format, and is it free?
+@app.route("/api/username-available")
+@requires_auth
+def username_available():
+    username = request.args.get("username", "").strip()
+    valid = bool(USERNAME_PATTERN.fullmatch(username))
+    available = valid and is_username_available(username, session["user"]["id"])
+    return {"valid": valid, "available": available}
+
+
+# Check and save a username; returns an error message, or None if it was saved
+def save_username(user_id, username):
+    username = username.strip()
+
+    if not USERNAME_PATTERN.fullmatch(username):
+        return "Usernames are 3-20 characters: letters, numbers and _ only."
+
+    if not set_username(user_id, username):
+        return f'"{username}" is already taken. Try another one.'
+
+    session["user"] = {**session["user"], "username": username}
+    return None
+
+
+# Suggest a free username from the person's name, e.g. "Poojitha Chandu" -> "poojitha_chandu"
+def suggest_username(name):
+    base = re.sub(r"[^a-z0-9]+", "_", (name or "").split("@")[0].lower()).strip("_")[:16]
+    if len(base) < 3:
+        base = "mixtaper"
+
+    candidate = base
+    number = 2
+    while not is_username_available(candidate) and number < 100:
+        candidate = f"{base}{number}"
+        number += 1
+
+    return candidate
 
 
 # /view without an id goes home
@@ -169,9 +286,9 @@ def view(mixtape_id):
     if mixtape is None:
         abort(404)
 
-    saved = bool(user) and is_mixtape_saved(user["sub"], mixtape_id)
+    saved = bool(user) and is_mixtape_saved(user["id"], mixtape_id)
     # check if the logged-in user is the creator of this mixtape?
-    is_owner = bool(user) and user["sub"] == mixtape["creator_id"]
+    is_owner = bool(user) and user["id"] == mixtape["creator_id"]
     return render_template(
         "view_mixtape.html",
         mixtape=mixtape,
@@ -210,7 +327,7 @@ def create():
         if error:
             return error
 
-        create_mixtape(session["user"]["sub"], **fields)
+        create_mixtape(session["user"]["id"], **fields)
 
         return redirect(url_for("profile"))
 
@@ -226,7 +343,7 @@ def edit(mixtape_id):
     mixtape = get_mixtape(mixtape_id)
     if mixtape is None:
         abort(404)
-    if mixtape["creator_id"] != user["sub"]:
+    if mixtape["creator_id"] != user["id"]:
         abort(403)
 
     if request.method == "POST":
@@ -234,7 +351,7 @@ def edit(mixtape_id):
         if error:
             return error
 
-        update_mixtape(user["sub"], mixtape_id, **fields)
+        update_mixtape(user["id"], mixtape_id, **fields)
 
         return redirect(url_for("view", mixtape_id=mixtape_id))
 
@@ -254,7 +371,7 @@ def remix(mixtape_id):
         if error:
             return error
 
-        new_id = create_mixtape(session["user"]["sub"], **fields, remixed_from_id=mixtape_id)
+        new_id = create_mixtape(session["user"]["id"], **fields, remixed_from_id=mixtape_id)
 
         return redirect(url_for("view", mixtape_id=new_id))
 
@@ -268,7 +385,7 @@ def render_mixtape_editor(mode, form_action, mixtape=None):
         mode=mode,
         form_action=form_action,
         mixtape=mixtape,
-        name=session["user"].get("name", "User"),
+        name=session["user"]["username"],
         mixtape_tags=MIXTAPE_TAGS
     )
 
@@ -280,6 +397,9 @@ def read_mixtape_form():
 
     if not title or len(title) > 150:
         return None, ("Title must be between 1 and 150 characters.", 400)
+
+    if len(description) > MAX_DESCRIPTION_LENGTH:
+        return None, (f"Description can be at most {MAX_DESCRIPTION_LENGTH} characters.", 400)
 
     tags = [
         tag for tag in request.form.getlist("tags") if tag in MIXTAPE_TAGS
@@ -326,6 +446,7 @@ def add():
 
 
 @app.route("/mixtape/<int:mixtape_id>/edit/upload_cover", methods=["POST"])
+@requires_auth
 def upload_cover(mixtape_id):
     user_id = session["user"]["id"]
     file = request.files["image"]
@@ -357,7 +478,7 @@ def search():
 @app.route("/mixtape/<int:mixtape_id>/save", methods=["POST"])
 @requires_auth
 def save(mixtape_id):
-    save_mixtape(session["user"]["sub"], mixtape_id)
+    save_mixtape(session["user"]["id"], mixtape_id)
     app.logger.info("mixtape saved")
     return {"saved": True}
 
@@ -366,7 +487,7 @@ def save(mixtape_id):
 @app.route("/mixtape/<int:mixtape_id>/unsave", methods=["POST"])
 @requires_auth
 def unsave(mixtape_id):
-    unsave_mixtape(session["user"]["sub"], mixtape_id)
+    unsave_mixtape(session["user"]["id"], mixtape_id)
     app.logger.info("mixtape unsaved")
     return {"saved": False}
 
@@ -375,7 +496,7 @@ def unsave(mixtape_id):
 @app.route("/mixtape/<int:mixtape_id>/delete", methods=["POST"])
 @requires_auth
 def delete(mixtape_id):
-    delete_mixtape(session["user"]["sub"], mixtape_id)
+    delete_mixtape(session["user"]["id"], mixtape_id)
     app.logger.info("mixtape deleted")
     return redirect(url_for("profile"))
 

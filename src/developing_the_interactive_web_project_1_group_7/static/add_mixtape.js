@@ -205,6 +205,21 @@ refreshDescriptionPreview();
 refreshTagPreview();
 
 titleInput.addEventListener("input", refreshTitlePreview);
+
+// A title of only spaces counts as empty (the server rejects it too)
+function checkTitle() {
+    titleInput.setCustomValidity(titleInput.value.trim() ? "" : "Please give your mixtape a title.");
+}
+titleInput.addEventListener("input", checkTitle);
+checkTitle();
+
+// The title box lives in a pop-up, so if Save is clicked without a title, open the pop-up so the browser can show its message
+titleInput.addEventListener("invalid", () => {
+    const titleDialog = document.getElementById("edit-title");
+    if (!titleDialog.open) {
+        titleDialog.showModal();
+    }
+});
 refreshTitlePreview();
 
 // When editing or remixing, start with the mixtape's existing songs and notes.

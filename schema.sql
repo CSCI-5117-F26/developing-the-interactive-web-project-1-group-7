@@ -9,6 +9,23 @@ CREATE TABLE users (
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Usernames are unique ignoring upper/lower case
+CREATE UNIQUE INDEX users_username_lower_key
+    ON users (lower(username));
+
+-- 1b. USER LOGINS
+-- Each Auth0 login (Google, email/password) points to one Mixtape account,
+-- so logging in either way with the same verified email reaches the same account
+CREATE TABLE user_logins (
+    login_id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL
+        REFERENCES users(auth0_id) ON DELETE CASCADE,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_user_logins_user
+    ON user_logins(user_id);
+
 -- 2. MIXTAPES
 CREATE TABLE mixtapes (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,

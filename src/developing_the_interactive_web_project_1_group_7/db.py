@@ -53,25 +53,120 @@ def get_db_connection():
     return psycopg.connect(os.environ["DATABASE_URL"])
 
 
-# Create or update a user after Auth0 login
-def save_user(user):
+# Find the Mixtape account for an Auth0 login (known login, then same verified email, else a new account) and return it
+def get_or_create_account(userinfo):
+    login_id = userinfo["sub"]
+    email = userinfo.get("email")
+
+    with get_db_connection() as conn:
+        with conn.cursor(row_factory=dict_row) as cur:
+            cur.execute(
+                """
+                SELECT u.auth0_id AS id, u.username
+                FROM user_logins l
+                JOIN users u ON u.auth0_id = l.user_id
+                WHERE l.login_id = %s
+                """,
+                (login_id,),
+            )
+            account = cur.fetchone()
+
+            # Account made before user_logins existed: its id is this login id
+            if account is None:
+                cur.execute(
+                    "SELECT auth0_id AS id, username FROM users WHERE auth0_id = %s",
+                    (login_id,),
+                )
+                account = cur.fetchone()
+
+            # Only link by email when the provider has verified it, so nobody can claim someone else's email
+            if account is None and email and userinfo.get("email_verified"):
+                cur.execute(
+                    """
+                    SELECT auth0_id AS id, username FROM users
+                    WHERE lower(email) = lower(%s)
+                    ORDER BY created_at, auth0_id
+                    LIMIT 1
+                    """,
+                    (email,),
+                )
+                account = cur.fetchone()
+
+            # New account; name and email are saved only here, never overwritten on later logins
+            if account is None:
+                cur.execute(
+                    """
+                    INSERT INTO users (auth0_id, name, email)
+                    VALUES (%s, %s, %s)
+                    ON CONFLICT (auth0_id) DO NOTHING
+                    """,
+                    (login_id, userinfo.get("name"), email),
+                )
+                account = {"id": login_id, "username": None}
+
+            cur.execute(
+                """
+                INSERT INTO user_logins (login_id, user_id)
+                VALUES (%s, %s)
+                ON CONFLICT (login_id) DO NOTHING
+                """,
+                (login_id, account["id"]),
+            )
+
+    return account
+
+
+# One account's id, username and name, or None if it doesn't exist
+def get_user(user_id):
+    with get_db_connection() as conn:
+        with conn.cursor(row_factory=dict_row) as cur:
+            cur.execute(
+                "SELECT auth0_id AS id, username, name FROM users WHERE auth0_id = %s",
+                (user_id,),
+            )
+
+            return cur.fetchone()
+
+
+# Whether nobody else has this username (ignoring upper/lower case)
+def is_username_available(username, user_id=None):
     with get_db_connection() as conn:
         with conn.cursor() as cur:
             cur.execute(
                 """
-                INSERT INTO users (auth0_id, name, email)
-                VALUES (%s, %s, %s)
-                ON CONFLICT (auth0_id)
-                DO UPDATE SET
-                    name = EXCLUDED.name,
-                    email = EXCLUDED.email
+                SELECT 1 FROM users
+                WHERE lower(username) = lower(%s) AND auth0_id IS DISTINCT FROM %s
                 """,
-                (
-                    user["sub"],
-                    user.get("name"),
-                    user.get("email"),
-                ),
+                (username, user_id),
             )
+
+            return cur.fetchone() is None
+
+
+# Set a user's username; False if someone else already has it
+def set_username(user_id, username):
+    try:
+        with get_db_connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "UPDATE users SET username = %s WHERE auth0_id = %s",
+                    (username, user_id),
+                )
+    except psycopg.errors.UniqueViolation:
+        return False
+
+    return True
+
+
+# Delete an account and everything it owns: its mixtapes (with their songs, tags, saves, likes, covers), its saves, likes, covers and logins
+def delete_account(user_id):
+    with get_db_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("DELETE FROM images WHERE user_id = %s", (user_id,))
+            cur.execute("DELETE FROM mixtape_likes WHERE user_id = %s", (user_id,))
+            cur.execute("DELETE FROM saved_mixtapes WHERE user_id = %s", (user_id,))
+            cur.execute("DELETE FROM mixtapes WHERE creator_id = %s", (user_id,))
+            cur.execute("DELETE FROM users WHERE auth0_id = %s", (user_id,))
 
 
 # Create a mixtape with its tags and ordered tracks 
