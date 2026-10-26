@@ -115,7 +115,7 @@
 
             <dialog id="add-description">
                 <h4>Add a description</h4>
-                <textarea name="description" class="pure-input-1" rows="4" placeholder="What's this mixtape about?">{{ mixtape.description or "" if mixtape }}</textarea>
+                <textarea name="description" class="pure-input-1" rows="4" maxlength:="500" placeholder="What's this mixtape about?">{{ mixtape.description or "" if mixtape }}</textarea>
                 <div class="dialog-buttons">
                     <button type="button" class="pure-button" commandfor="add-description" command="close">Done</button>
                 </div>
@@ -198,7 +198,7 @@
 
         <div class="pure-u-6-24"></div>
         <div class="pure-u-18-24">
-            <input type="text" name="annotations" form="mixtape-form" class="song-note-input" maxlength="300" placeholder="Add a note about why this song is here (optional)">
+            <input type="text" name="annotations" form="mixtape-form" class="song-note-input" maxlength="110" placeholder="Add a note about why this song is here (optional)">
         </div>
     </div>
 </template>
