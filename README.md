@@ -48,7 +48,7 @@ In this space please either provide images (around 4) showing your prototypes, O
 
 **[Add images/photos that show your paper prototype (around 4)](https://stackoverflow.com/questions/10189356/how-to-add-screenshot-to-readmes-in-github-repository) along with a very brief caption:**
 -->
-
+<!--
 **1. Guest view of the homepage**
 ![](mockups/guest-homepage.png)
 <br><br>
@@ -82,7 +82,7 @@ In this space please either provide images (around 4) showing your prototypes, O
 **11. Delete my Mixtape**
 ![](mockups/delete-mixtape.png)
 <br><br>
-
+-->
 ## External Dependencies
 
 **Document integrations with 3rd Party code or services here.
