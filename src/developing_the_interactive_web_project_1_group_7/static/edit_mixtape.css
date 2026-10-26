@@ -233,3 +233,9 @@ dialog p {
 .stats > div {
     width: auto;
 }
+
+/* Prevents text from overflowing */ 
+.mixtape-title, .mixtape-desc, #remix-source { 
+    overflow-wrap: anywhere;
+    word-break: normal; 
+} 
