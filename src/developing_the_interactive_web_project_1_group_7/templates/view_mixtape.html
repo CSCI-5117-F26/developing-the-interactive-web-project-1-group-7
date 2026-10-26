@@ -46,6 +46,41 @@
   from {bottom: 30px; opacity: 1;}
   to {bottom: 0; opacity: 0;}
 }
+
+#mixtape-cover {
+  position: relative;
+}
+
+.cover-overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  opacity: 0;
+  transition: .3s ease;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 15px;
+}
+
+#mixtape-cover:hover .cover-overlay {
+  opacity: 1;
+}
+
+.cover-overlay-text {
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  white-space: nowrap;
+}
+
 </style>
 <link rel="stylesheet" href="{{ url_for('static', filename='edit_mixtape.css') }}">
 
@@ -67,6 +102,7 @@
             <img id="mixtape-cover-img" src="/static/images/mixtape-cover.png" alt="mixtape cover" width="200">
             {% endif %}
             {% if is_owner %}
+            <span class="cover-overlay"><span class="cover-overlay-text"><i class="fa-solid fa-pen"></i><br>Change cover</span></span>
             </button>
             {% endif %}
         </div>
@@ -88,7 +124,11 @@
             <div class="pure-u-1-3"><p><span id="total-save">{{ mixtape.saved_count }}</span> Saved</p></div>
             <!-- <div class="pure-u-1-3"><p>15 Likes</p></div> -->
         </div>
+        {% if is_owner %}
+        <p class="mixtape-owner" id="mixtape-owner">By You</p>
+        {% else %}
         <p class="mixtape-owner" id="mixtape-owner">By {{ mixtape.creator_name }}</p>
+        {% endif %}
 
         {% if mixtape.tags %}
         <ul class="filters card-tags view-tags">
