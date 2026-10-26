@@ -21,7 +21,10 @@ CSCI 5117, Fall 2026, [assignment description](https://canvas.umn.edu/courses/57
 **Describe the most challenging features you implemented
 (one sentence per bullet, maximum 4 bullets):**
 
-* ...
+* Spotify API integration: adapting the authorization token example code to work with Flask, refreshing authorization tokens.
+* Uploading images: Storing images in a bytea column in PostgreSQL and retrieving them to display as an image again.
+* Drag to reorder: changing the position of tracks through drag and drop interaction, saving the updated position in the database.
+* UI responsiveness: limiting the sizes of containers that contain user-generated content while still making the content available in full.
 
 ## Testing Notes
 
@@ -88,11 +91,11 @@ In this space please either provide images (around 4) showing your prototypes, O
 **Document integrations with 3rd Party code or services here.
 Please do not document required libraries. or libraries that are mentioned in the product requirements**
 
-* Library or service name: description of use
+* Spotify API: Used as a source of tracks that can be added to mixtapes, retrieving information such as song title, artist, album cover image, and duration. 
 * ...
 
 **If there's anything else you would like to disclose about how your project
 relied on external code, expertise, or anything else, please disclose that
 here:**
-
+[The Spotify API documentation](https://developer.spotify.com/documentation/web-api) contains example code for setting up authentication that served as the basis of the Python/Flask version in our project. 
 ...
