@@ -120,7 +120,7 @@
             <p>Are you sure you want to delete "{{ mixtape.title }}" from your library?</p>
             <form method="POST" action="/mixtape/{{ mixtape.id }}/delete" class="dialog-buttons">
                 <button type="button" class="pure-button button-cancel" commandfor="delete-mixtape" command="close">Cancel</button>
-                <button type="submit" class="pure-button button-confirm">Delete</button>
+                <button type="submit" class="pure-button button-confirm-blue">Delete</button>
             </form>
         </dialog>
 
@@ -188,6 +188,12 @@
         {% endif %}
     </div>
     <div class="pure-u-1 pure-u-md-3-4 right-side">
+        <div class="pure-g song-header">
+            <div class="pure-u-4-24"></div>
+            <div class="pure-u-16-24">Song / Artist</div>
+            <div class="pure-u-2-24"><i class="fa-regular fa-clock" aria-label="Duration"></i></div>
+            <div class="pure-u-2-24"></div>
+        </div>
         {% for song in mixtape.tracks %}
             {% include "./components/song_row.html" %}
         {% else %}

@@ -148,9 +148,19 @@ const tagButtonLabel = document.getElementById("tag-button-label");
 
 function refreshDescriptionPreview() {
     const description = descriptionInput.value.trim();
-    descriptionPreview.textContent = description;
-    descriptionPreview.hidden = !description;
-    descriptionButtonLabel.textContent = description ? "Edit Description" : "Add Description";
+
+    if (description) {
+        descriptionPreview.textContent = description;
+        descriptionPreview.style.color = "";
+    } else {
+        descriptionPreview.textContent = "No description yet";
+        descriptionPreview.style.color = "#cccccc";
+    }
+
+    // changed the edit/add btn to just pencil icon
+    // descriptionPreview.textContent = description;
+    // descriptionPreview.hidden = !description;
+    // descriptionButtonLabel.textContent = description ? "Edit Description" : "Add Description";
 }
 
 function refreshTagPreview() {
@@ -165,6 +175,13 @@ function refreshTagPreview() {
         const item = document.createElement("li");
         item.appendChild(chip);
         tagPreview.appendChild(item);
+    }
+
+    if (checked.length === 0) {
+        tagPreview.textContent = "No tags yet";
+        tagPreview.style.color = "#cccccc";
+    } else {
+        tagPreview.style.color = "";
     }
 
     tagButtonLabel.textContent = checked.length ? "Edit tags" : "Add tag";
