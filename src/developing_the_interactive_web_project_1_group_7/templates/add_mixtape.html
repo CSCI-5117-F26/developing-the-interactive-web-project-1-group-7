@@ -115,7 +115,7 @@
 
             <dialog id="add-description">
                 <h4>Add a description</h4>
-                <textarea name="description" class="pure-input-1" rows="4" maxlength:="500" placeholder="What's this mixtape about?">{{ mixtape.description or "" if mixtape }}</textarea>
+                <textarea name="description" class="pure-input-1" rows="4" maxlength="500" placeholder="What's this mixtape about?">{{ mixtape.description or "" if mixtape }}</textarea>
                 <div class="dialog-buttons">
                     <button type="button" class="pure-button" commandfor="add-description" command="close">Done</button>
                 </div>
