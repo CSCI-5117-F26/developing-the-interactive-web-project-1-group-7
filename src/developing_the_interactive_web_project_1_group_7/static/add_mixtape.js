@@ -63,10 +63,6 @@ function addSong(track) {
     row.querySelector('input[name="track_ids"]').value = track.spotify_id;
     row.querySelector(".song-duration").textContent = formatDuration(track.duration_ms);
     row.querySelector(".song-note-input").value = track.annotation || "";
-    // row.querySelector(".remove-song").addEventListener("click", () => {
-    //     row.remove();
-    //     refreshSelectedState();
-    // });
 
     // adding confirm modal
     row.querySelector(".remove-song").addEventListener("click", () => {
@@ -148,10 +144,8 @@ selectedSongs.addEventListener("keydown", (event) => {
 // Show the description and tags on the page as soon as they're chosen in the dialogs, before the mixtape is saved
 const descriptionInput = document.querySelector('textarea[name="description"]');
 const descriptionPreview = document.getElementById("description-preview");
-const descriptionButtonLabel = document.getElementById("description-button-label");
 const tagCheckboxes = document.querySelectorAll('input[name="tags"]');
 const tagPreview = document.getElementById("tag-preview");
-const tagButtonLabel = document.getElementById("tag-button-label");
 
 const titleInput = document.querySelector('input[name="title"]');
 const titlePreview = document.getElementById("title-preview");
@@ -175,11 +169,6 @@ function refreshDescriptionPreview() {
         descriptionPreview.textContent = "No description yet";
         descriptionPreview.style.color = "#cccccc";
     }
-
-    // changed the edit/add btn to just pencil icon
-    // descriptionPreview.textContent = description;
-    // descriptionPreview.hidden = !description;
-    // descriptionButtonLabel.textContent = description ? "Edit Description" : "Add Description";
 }
 
 function refreshTagPreview() {
@@ -202,8 +191,6 @@ function refreshTagPreview() {
     } else {
         tagPreview.style.color = "";
     }
-
-    // tagButtonLabel.textContent = checked.length ? "Edit tags" : "Add tag";
 }
 
 descriptionInput.addEventListener("input", refreshDescriptionPreview);

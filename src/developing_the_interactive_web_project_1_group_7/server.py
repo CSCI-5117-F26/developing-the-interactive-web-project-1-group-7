@@ -470,13 +470,6 @@ def read_mixtape_form():
     fields = {"title": title, "description": description, "tags": tags, "tracks": tracks}
     return fields, None
 
-
-# Redirecting just for compatibility - should work without this
-@app.route("/add")
-def add():
-    return redirect(url_for("create"))
-
-
 COVER_TYPE_ERROR = "Cover must be a PNG, JPG, GIF or WebP image."
 
 # Only image files
