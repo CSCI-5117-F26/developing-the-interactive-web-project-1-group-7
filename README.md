@@ -21,21 +21,21 @@ CSCI 5117, Fall 2026, [assignment description](https://canvas.umn.edu/courses/57
 **Describe the most challenging features you implemented
 (one sentence per bullet, maximum 4 bullets):**
 
-* Spotify API integration: adapting the authorization token example code to work with Flask, refreshing authorization tokens.
-* Uploading images: Storing images in a bytea column in PostgreSQL and retrieving them to display as an image again.
-* Drag to reorder: changing the position of tracks through drag and drop interaction, saving the updated position in the database.
-* Smart search: PostgreSQL full-text search with weighted fields (title, then tags and creator, then description and songs), word-stem matching, and ranked results.
+* **Spotify API integration:** Adapting the authorization token example code to work with Flask, refreshing authorization tokens.
+* **Uploading images:** Storing images in a bytea column in PostgreSQL and retrieving them to display as an image again.
+* **Drag to reorder:** changing the position of tracks through drag and drop interaction, saving the updated position in the database.
+* **Search:** PostgreSQL full-text search with weighted fields (title, then tags and creator, then description and songs), word-stem matching, and ranked results.
 
 ## Testing Notes
 
 **Is there anything special we need to know in order to effectively test your app?**
 
-* Log in with **Google** or **email/password**. Email/password accounts must click the verification link from Auth0 before they can log in. Logging in with Google and with email/password using the same verified email reaches the same Mixtape account.
+* **Log in** with Google or email/password. Email/password accounts must click the verification link from Auth0 before they can log in. Logging in with Google and with email/password using the same verified email reaches the same Mixtape account.
 * **Without logging in** you can browse the home page, filter by tags, search, open any mixtape, and export its song list. Creating, editing, remixing require logging in.
+* **Username:** on your first login you'll pick a public username (3–20 letters, numbers or `_`; checked live as you type). You can change it later under **Profile** → Edit profile.
 * **Create a mixtape** with **Add Mixtape**: Click the cover to upload your own image (PNG, JPG, GIF or WebP, up to 5 MB); otherwise the first song's album art is used.
-* Only the **creator** can edit or delete a mixtape. On someone else's mixtape you can **Remix** it (save your own copy, linked as "Remixed from ***") or **save** it with the bookmark icon; saved mixtapes appear on your Profile.
+* Only the **creator** can edit or delete a mixtape. On someone else's mixtape you can **Remix** it (save your own copy, linked as "Remixed from ...") or **save** it with the bookmark icon; saved mixtapes appear on your Profile.
 * **Export** (share icon on a mixtape) downloads its song list as a text file.
-* **UI responsiveness** limits the sizes of containers that contain user-generated content while still making the content available in full.
 
 
 ## Screenshots of Site
