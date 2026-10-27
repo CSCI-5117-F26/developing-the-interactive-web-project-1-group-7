@@ -445,15 +445,16 @@ def add():
     return redirect(url_for("create"))
 
 
-@app.route("/mixtape/<int:mixtape_id>/edit/upload_cover", methods=["POST"])
+@app.route("/mixtape/<int:mixtape_id>/edit/upload_cover", methods=["GET","POST"])
 @requires_auth
-def upload_cover(mixtape_id):
+def upload_cover(mode, mixtape_id):
     user_id = session["user"]["id"]
     file = request.files["image"]
     # maybe not needed?
     # filename = secure_filename(file.filename)
     filestream = file.read()
     cover_to_db(filestream, user_id, mixtape_id)
+    return redirect(url_for)
 
 
 # Preview of the search results modal (frontend WIP)
@@ -507,7 +508,7 @@ def delete(mixtape_id):
 def search_spotify_tracks():
     query = request.args.get("q", "").strip()
 
-    if not query:
+    if not query or len(query) == 0:
         return {"tracks": []}
 
     if len(query) > 100:

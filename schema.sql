@@ -107,12 +107,13 @@ CREATE TABLE mixtape_likes (
 
 -- 8. IMAGES
 CREATE TABLE images (
-    image_id TEXT PRIMARY KEY,
     user_id TEXT NOT NULL
         REFERENCES users(auth0_id),
     mixtape_id BIGINT NOT NULL
         REFERENCES mixtapes(id) on DELETE CASCADE,
-    stream BYTEA
+    stream BYTEA NOT NULL,
+
+    PRIMARY KEY (mixtape_id)
 );
 
 -- Might be useful by making certain reads faster
