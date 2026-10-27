@@ -99,7 +99,7 @@
                 <h4>{{ "Add a cover" if mode == "create" else "Change cover" }}</h4>
                 <img id="cover-preview" src="{{ mixtape.cover_image_url if mixtape and mixtape.cover_image_url else '/static/images/mixtape-cover.png' }}" alt="cover preview" width="200">
                 <br>
-                <input id="cover-input" name="image" type="file" accept="image/*">
+                <input id="cover-input" name="image" type="file" accept=".png,.jpg,.jpeg,.gif,.webp">
                 <div class="dialog-buttons">
                     <button type="button" class="pure-button" commandfor="change-cover" command="close">Done</button>
                 </div>

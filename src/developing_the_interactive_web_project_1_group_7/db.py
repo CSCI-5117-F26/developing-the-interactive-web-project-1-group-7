@@ -33,6 +33,11 @@ MIXTAPE_SUMMARY_SQL = """
             ORDER BY tag
         ) AS tags,
         COALESCE(
+            (
+                SELECT '/mixtape/' || m.id || '/cover'
+                FROM images i
+                WHERE i.mixtape_id = m.id
+            ),
             m.cover_image_url,
             (
                 SELECT t.album_image_url
@@ -425,22 +430,20 @@ def cover_to_db(filestream, user_id, mixtape_id):
                 """
                 INSERT INTO images (user_id, mixtape_id, stream)
                 VALUES (%s, %s, %s)
+                ON CONFLICT (mixtape_id) DO UPDATE SET stream = EXCLUDED.stream
                 """,
-                (user_id, mixtape_id, psycopg.Binary(filestream))
+                (user_id, mixtape_id, filestream),
             )
-            conn.commit()
 
 def get_cover(mixtape_id):
     with get_db_connection() as conn:
-            with conn.cursor() as cur:
-                cur.execute(
-                    """
-                    SELECT 1 FROM images
-                    WHERE mixtape_id = %s
-                    """,
-                    (mixtape_id)
-                )
-                return cur.fetchone()
+        with conn.cursor() as cur:
+            cur.execute(
+                "SELECT stream FROM images WHERE mixtape_id = %s",
+                (mixtape_id,),
+            )
+            row = cur.fetchone()
+            return row[0] if row else None
 
 
 # Note to dev

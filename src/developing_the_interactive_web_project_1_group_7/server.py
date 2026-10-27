@@ -11,7 +11,7 @@ import requests
 from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
 from flask import Flask, abort, redirect, request, render_template, send_file, session, url_for
-from werkzeug.utils import secure_filename
+# from werkzeug.utils import secure_filename
 
 from .db import (
     get_or_create_account,
@@ -31,6 +31,7 @@ from .db import (
     unsave_mixtape,
     delete_mixtape,
     cover_to_db,
+    get_cover,
 )
 
 load_dotenv()
@@ -47,6 +48,7 @@ MAX_ANNOTATION_LENGTH = 110
 SPOTIFY_ID_PATTERN = re.compile(r"[A-Za-z0-9]{22}")
 SPOTIFY_SEARCH_LIMIT = 10
 USERNAME_PATTERN = re.compile(r"[A-Za-z0-9_]{3,20}")
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
 
 # Pages a logged-in user can reach before picking a username
 USERNAME_NOT_NEEDED = {"choose_username", "username_available", "logout", "login", "signup", "callback", "static"}
@@ -57,6 +59,7 @@ app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE="Lax",
     SESSION_COOKIE_SECURE=os.environ.get("RENDER") == "true",
+    MAX_CONTENT_LENGTH=5 * 1024 * 1024,
 )
 
 
@@ -327,7 +330,15 @@ def create():
         if error:
             return error
 
-        create_mixtape(session["user"]["id"], **fields)
+        file = request.files.get("image")
+        if file is None or file.filename == "":
+            return None
+        if file and not allowed_file(file.filename):
+            return COVER_TYPE_ERROR, 400
+
+        new_id = create_mixtape(session["user"]["id"], **fields)
+        if file:
+            cover_to_db(file.read(), session["user"]["id"], new_id)
 
         return redirect(url_for("profile"))
 
@@ -351,7 +362,15 @@ def edit(mixtape_id):
         if error:
             return error
 
+        file = request.files.get("image")
+        if file is None or file.filename == "":
+            return None
+        if file and not allowed_file(file.filename):
+            return COVER_TYPE_ERROR, 400
+
         update_mixtape(user["id"], mixtape_id, **fields)
+        if file:
+            cover_to_db(file.read(), user["id"], mixtape_id)
 
         return redirect(url_for("view", mixtape_id=mixtape_id))
 
@@ -371,7 +390,15 @@ def remix(mixtape_id):
         if error:
             return error
 
+        file = request.files.get("image")
+        if file is None or file.filename == "":
+            return None
+        if file and not allowed_file(file.filename):
+            return COVER_TYPE_ERROR, 400
+
         new_id = create_mixtape(session["user"]["id"], **fields, remixed_from_id=mixtape_id)
+        if file:
+            cover_to_db(file.read(), session["user"]["id"], new_id)
 
         return redirect(url_for("view", mixtape_id=new_id))
 
@@ -445,16 +472,41 @@ def add():
     return redirect(url_for("create"))
 
 
-@app.route("/mixtape/<int:mixtape_id>/edit/upload_cover", methods=["GET","POST"])
+COVER_TYPE_ERROR = "Cover must be a PNG, JPG, GIF or WebP image."
+
+# Only image files
+def allowed_file(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.route("/mixtape/<int:mixtape_id>/edit/upload_cover", methods=["POST"])
 @requires_auth
-def upload_cover(mode, mixtape_id):
-    user_id = session["user"]["id"]
-    file = request.files["image"]
-    # maybe not needed?
-    # filename = secure_filename(file.filename)
-    filestream = file.read()
-    cover_to_db(filestream, user_id, mixtape_id)
-    return redirect(url_for)
+def upload_cover(mixtape_id):
+    user = session["user"]
+
+    mixtape = get_mixtape(mixtape_id)
+    if mixtape is None:
+        abort(404)
+    if mixtape["creator_id"] != user["id"]:
+        abort(403)
+
+    file = request.files.get("image")
+    if file is None or file.filename == "":
+        file = None
+    if file is None:
+        return "Choose an image to upload.", 400
+    if not allowed_file(file.filename):
+        return COVER_TYPE_ERROR, 400
+
+    cover_to_db(file.read(), user["id"], mixtape_id)
+    return redirect(url_for("view", mixtape_id=mixtape_id))
+
+
+@app.route("/mixtape/<int:mixtape_id>/cover")
+def cover_image(mixtape_id):
+    image = get_cover(mixtape_id)
+    if image is None:
+        abort(404)
+    return send_file(io.BytesIO(image), mimetype="image/png")
 
 
 # Preview of the search results modal (frontend WIP)
