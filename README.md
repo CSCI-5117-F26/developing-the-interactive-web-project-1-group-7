@@ -30,7 +30,7 @@ CSCI 5117, Fall 2026, [assignment description](https://canvas.umn.edu/courses/57
 
 **Is there anything special we need to know in order to effectively test your app?**
 
-* Log in with **Google** or **email/password**. Logging in with Google and with email/password using the same verified email reaches the same Mixtape account.
+* Log in with **Google** or **email/password**. Email/password accounts must click the verification link from Auth0 before they can log in. Logging in with Google and with email/password using the same verified email reaches the same Mixtape account.
 * **Without logging in** you can browse the home page, filter by tags, search, open any mixtape, and export its song list. Creating, editing, remixing require logging in.
 * **Create a mixtape** with **Add Mixtape**: Click the cover to upload your own image (PNG, JPG, GIF or WebP, up to 5 MB); otherwise the first song's album art is used.
 * Only the **creator** can edit or delete a mixtape. On someone else's mixtape you can **Remix** it (save your own copy, linked as "Remixed from ***") or **save** it with the bookmark icon; saved mixtapes appear on your Profile.
