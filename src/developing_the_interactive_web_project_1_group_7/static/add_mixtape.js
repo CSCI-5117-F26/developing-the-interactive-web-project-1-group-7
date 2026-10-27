@@ -131,6 +131,13 @@ searchForm.addEventListener("submit", async (event) => {
     }
 });
 
+searchInput.addEventListener("input", () => {
+    if (!searchInput.value.trim()) {
+        searchResults.replaceChildren();
+        searchStatus.textContent = "";
+    }
+});
+
 // Enter in a note field shouldn't save the whole mixtape
 selectedSongs.addEventListener("keydown", (event) => {
     if (event.key === "Enter" && event.target.matches(".song-note-input")) {

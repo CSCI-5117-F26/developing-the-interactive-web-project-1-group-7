@@ -183,12 +183,12 @@
         {% endif %}
 
         {% if mixtape.remixed_from %}
-        <div class="pure-g">
-            <i class="fa-solid fa-code-branch"></i> <span id="remix-source" style="margin-left: 15px;">Remixed from <a href="{{ url_for('view', mixtape_id=mixtape.remixed_from.id) }}">"{{ mixtape.remixed_from.title }}"</a> by {{ mixtape.remixed_from.creator_name }}</span>
+        <div class="remix-source-row" style="margin-top: 15px; display:flex; align-items: flex-start; gap:10px">
+            <i class="fa-solid fa-code-branch"></i> <span id="remix-source">Remixed from <a href="{{ url_for('view', mixtape_id=mixtape.remixed_from.id) }}">"{{ mixtape.remixed_from.title }}"</a> by {{ mixtape.remixed_from.creator_name }}</span>
         </div>
         {% elif mixtape.remixed_from_id %}
-        <div class="pure-g">
-            <i class="fa-solid fa-code-branch"></i> <span id="remix-source" style="margin-left: 15px;">Remixed from a deleted mixtape</span>
+        <div class="remix-source-row" style="margin-top: 15px; display:flex; align-items: flex-start; gap:10px">
+            <i class="fa-solid fa-code-branch"></i> <span id="remix-source">Remixed from a deleted mixtape</span>
         </div>
         {% endif %}
     </div>
@@ -224,6 +224,10 @@ if (saveButton) {
         saveButton.disabled = true;
         try {
             const response = await fetch(`/mixtape/{{ mixtape.id }}/${action}`, { method: "POST" });
+            if (response.status === 404) {
+                showSnackbar("This mixtape does not exist.");
+                return;
+            }
             if (!response.ok) throw new Error();
             const data = await response.json();
 

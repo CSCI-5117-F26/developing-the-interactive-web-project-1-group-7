@@ -90,7 +90,11 @@
 .actions > div {
     width: auto;
 }
- 
+
+.actions.pure-g {
+    flex-wrap: nowrap;
+}
+
 #remix {
     font-size: 15px;
     color: #cccccc;
@@ -109,13 +113,15 @@
 .actions i {
     font-size: 15px;
 }
- 
-#remix,
+
 #save,
 #like {
     cursor: pointer;
 }
  
+.remix-source-row i {
+    margin-top: 3px;
+}
 #remix-source {
     font-size: 15px;
     letter-spacing: normal;

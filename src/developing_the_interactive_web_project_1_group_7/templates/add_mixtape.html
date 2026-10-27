@@ -155,7 +155,7 @@
 
         <div style="padding: 0 50px;">
             <form class="pure-form" id="song-search" action="{{ url_for('search_spotify_tracks') }}" method="GET">
-                <input id="q" name="q" type="text" required maxlength="100" placeholder="Search song..."/>
+                <input id="q" name="q" type="search" required maxlength="100" placeholder="Search song..."/>
                 <button type="submit" class="pure-button login">Search</button>
             </form>
 
@@ -177,7 +177,7 @@
     <div class="pure-g song selected-song">
         <input type="hidden" name="track_ids" form="mixtape-form">
         <div class="pure-u-2-24">
-            <button type="button" class="icon-button remove-song" aria-label="Remove song"><i class="fa-solid fa-minus"></i></button>
+            <button type="button" class="icon-button remove-song" aria-label="Remove song" title="Remove song"><i class="fa-solid fa-minus"></i></button>
         </div>
         <div class="pure-u-4-24">
             <img class="song-img" alt="">
@@ -193,7 +193,7 @@
             <p class="song-duration"></p>
         </div>
         <div class="pure-u-2-24">
-            <i class="fa-solid fa-bars drag-handle" aria-label="Drag to reorder"></i>
+            <i class="fa-solid fa-bars drag-handle" aria-label="Drag to reorder" title="Drag to reorder"></i>
         </div>
 
         <div class="pure-u-6-24"></div>
@@ -221,10 +221,8 @@
     </div>
 </template>
 
-<div style="position: fixed; bottom: 20px; right: 30px; z-index: 99;">
-    {% if mixtape %}
-    <a href="{{ url_for('view', mixtape_id=mixtape.id) }}" class="pure-button login button-cancel">Cancel</a>
-    {% endif %}
+<div class="editor-actions">
+    <a href="{{ url_for('view', mixtape_id=mixtape.id) if mixtape else url_for('home') }}" class="pure-button login button-cancel">Cancel</a>
     <button type="submit" form="mixtape-form" class="pure-button login">
         {% if mode == "edit" %}Save changes{% elif mode == "remix" %}Save remix{% else %}Save{% endif %}
     </button>

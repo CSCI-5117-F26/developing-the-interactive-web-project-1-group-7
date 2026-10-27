@@ -114,3 +114,21 @@
     padding-bottom: 8px;
     margin-bottom: 10px;
 }
+
+.song-header .pure-u-2-24 {
+    text-align: center;
+}
+
+.editor-actions {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 12px 30px;
+    background: rgba(20, 20, 20, 0.92);
+    border-top: 1px solid #333333;
+    z-index: 99;
+}
