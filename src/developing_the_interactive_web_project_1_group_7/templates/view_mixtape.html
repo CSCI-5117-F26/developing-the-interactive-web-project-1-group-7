@@ -55,7 +55,7 @@
     <div class="pure-u-1 pure-u-md-1-4 left-side">
         <div class="card" id="mixtape-cover">
             {% if is_owner %}
-            <button type="button" command="show-modal" commandfor="change-cover" aria-label="Change cover" style="background: none; border: none; padding: 0; width: 100%; height: 100%; cursor: pointer;">
+            <!-- <button type="button" command="show-modal" commandfor="change-cover" aria-label="Change cover" style="background: none; border: none; padding: 0; width: 100%; height: 100%; cursor: pointer;"> -->
             <!-- <form method="post" action="{{url_for('upload_cover', mixtape_id=mixtape.id)}}" enctype="multipart/form-data">
                 <input name="image" type="file" accept="image/*">
                 <button type="submit" command="show-modal" commandfor="change-cover" aria-label="Change cover" style="background: none; border: none; padding: 0; width: 100%; height: 100%; cursor: pointer;">
@@ -67,7 +67,7 @@
             <img id="mixtape-cover-img" src="/static/images/mixtape-cover.png" alt="mixtape cover" width="200">
             {% endif %}
             {% if is_owner %}
-            </button>
+            <!-- </button> -->
             {% endif %}
         </div>
         <div class="pure-g">
