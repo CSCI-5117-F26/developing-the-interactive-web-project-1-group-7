@@ -92,10 +92,10 @@ In this space please either provide images (around 4) showing your prototypes, O
 Please do not document required libraries. or libraries that are mentioned in the product requirements**
 
 * Spotify API: Used as a source of tracks that can be added to mixtapes, retrieving information such as song title, artist, album cover image, and duration. 
-* ...
+* SortableJS: Used for drag and drop reordering of songs while editing mixtape.
 
 **If there's anything else you would like to disclose about how your project
 relied on external code, expertise, or anything else, please disclose that
 here:**
-[The Spotify API documentation](https://developer.spotify.com/documentation/web-api) contains example code for setting up authentication that served as the basis of the Python/Flask version in our project. 
-...
+* [The Spotify API documentation](https://developer.spotify.com/documentation/web-api) contains example code for setting up authentication that served as the basis of the Python/Flask version in our project. 
+* [The SortableJS documentation](https://sortablejs.github.io/Sortable/) contains example code for implementing sortable drag and drop using SortableJS Library. 
