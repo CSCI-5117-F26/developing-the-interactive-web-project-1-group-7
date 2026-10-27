@@ -8,8 +8,6 @@
     <h2>Browse recent mixtapes</h2>
     <div class="filters">
         <ul> 
-            <!-- <li><button class="pure-button selected">recent</button></li> -->
-            <!-- <li><button class="pure-button">popular</button></li> -->
             {% for tag in selected_tags %}
             <li>
                 <a href="{{ url_for('home', tag=selected_tags | reject('equalto', tag) | list) }}" class="pure-button tag-{{ tag }} selected">

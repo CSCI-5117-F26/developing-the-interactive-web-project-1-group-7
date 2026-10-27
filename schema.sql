@@ -92,20 +92,7 @@ CREATE TABLE saved_mixtapes (
     PRIMARY KEY (user_id, mixtape_id)
 );
 
--- 7. MIXTAPE LIKES
-CREATE TABLE mixtape_likes (
-    user_id TEXT NOT NULL
-        REFERENCES users(auth0_id),
-
-    mixtape_id BIGINT NOT NULL
-        REFERENCES mixtapes(id) ON DELETE CASCADE,
-
-    liked_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-
-    PRIMARY KEY (user_id, mixtape_id)
-);
-
--- 8. IMAGES
+-- 7. IMAGES
 CREATE TABLE images (
     user_id TEXT NOT NULL
         REFERENCES users(auth0_id),
@@ -132,6 +119,3 @@ CREATE INDEX idx_mixtape_tags_tag
 
 CREATE INDEX idx_saved_mixtapes_mixtape
     ON saved_mixtapes(mixtape_id);
-
-CREATE INDEX idx_mixtape_likes_mixtape
-    ON mixtape_likes(mixtape_id);

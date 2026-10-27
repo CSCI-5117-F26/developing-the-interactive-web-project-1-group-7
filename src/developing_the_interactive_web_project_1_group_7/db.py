@@ -163,12 +163,11 @@ def set_username(user_id, username):
     return True
 
 
-# Delete an account and everything it owns: its mixtapes (with their songs, tags, saves, likes, covers), its saves, likes, covers and logins
+# Delete an account and everything it owns: its mixtapes (with their songs, tags, saves, covers), its saves, covers and logins
 def delete_account(user_id):
     with get_db_connection() as conn:
         with conn.cursor() as cur:
             cur.execute("DELETE FROM images WHERE user_id = %s", (user_id,))
-            cur.execute("DELETE FROM mixtape_likes WHERE user_id = %s", (user_id,))
             cur.execute("DELETE FROM saved_mixtapes WHERE user_id = %s", (user_id,))
             cur.execute("DELETE FROM mixtapes WHERE creator_id = %s", (user_id,))
             cur.execute("DELETE FROM users WHERE auth0_id = %s", (user_id,))
@@ -315,17 +314,7 @@ def list_saved_mixtapes(user_id):
             )
 
             return cur.fetchall()
-
-
-# Mixtapes whose title or description contains the search text
-# def search_mixtapes(query):
-#     conn = get_db_connection()
-#     cur = conn.cursor(row_factory=dict_row)
-#     cur.execute(MIXTAPE_SUMMARY_SQL + " WHERE m.title ILIKE %s OR m.description ILIKE %s ORDER BY m.created_at DESC, m.id DESC", (f"%{query}%", f"%{query}%"))
-#     rows = cur.fetchall()
-#     cur.close()
-#     conn.close()
-#     return rows
+        
 
 # Search titles, tags, users, descriptions and songs with PostgreSQL full-text search, best matches first(weightage)
 def search_mixtapes(query):

@@ -1,7 +1,6 @@
 <a class="mixtape-card" href="{{ url_for('view', mixtape_id=mixtape.id) }}">
 
-    <!-- Cover is the first song's album art; falls back to the placeholder -->
-     <!-- Need to work on upload cover -->
+    <!-- Cover: the uploaded cover if any, otherwise the first song's album art, otherwise the placeholder -->
     <img src="{{ mixtape.cover_image_url or url_for('static', filename='images/cover.png') }}" alt="{{ mixtape.title }} cover" width="200" loading="lazy">
 
     <div class="mixtape-description">

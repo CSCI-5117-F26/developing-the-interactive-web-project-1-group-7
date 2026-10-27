@@ -1,7 +1,7 @@
 [project]
 name = "developing-the-interactive-web-project-1-group-7"
 version = "0.1.0"
-description = "Add your description here"
+description = "Mixtape: create, remix and edit playlists; songs details are fetched by Spotify API"
 readme = "README.md"
 authors = [
     { name = "Amelia Vrieze", email = "vriezeam@grinnell.edu" }

@@ -11,7 +11,6 @@ import requests
 from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
 from flask import Flask, abort, redirect, request, render_template, send_file, session, url_for
-# from werkzeug.utils import secure_filename
 
 from .db import (
     get_or_create_account,
@@ -484,29 +483,8 @@ COVER_TYPE_ERROR = "Cover must be a PNG, JPG, GIF or WebP image."
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@app.route("/mixtape/<int:mixtape_id>/edit/upload_cover", methods=["POST"])
-@requires_auth
-def upload_cover(mixtape_id):
-    user = session["user"]
 
-    mixtape = get_mixtape(mixtape_id)
-    if mixtape is None:
-        abort(404)
-    if mixtape["creator_id"] != user["id"]:
-        abort(403)
-
-    file = request.files.get("image")
-    if file is None or file.filename == "":
-        file = None
-    if file is None:
-        return "Choose an image to upload.", 400
-    if not allowed_file(file.filename):
-        return COVER_TYPE_ERROR, 400
-
-    cover_to_db(file.read(), user["id"], mixtape_id)
-    return redirect(url_for("view", mixtape_id=mixtape_id))
-
-
+# Send a mixtape's uploaded cover image to the browser
 @app.route("/mixtape/<int:mixtape_id>/cover")
 def cover_image(mixtape_id):
     image = get_cover(mixtape_id)
@@ -515,13 +493,7 @@ def cover_image(mixtape_id):
     return send_file(io.BytesIO(image), mimetype="image/png")
 
 
-# Preview of the search results modal (frontend WIP)
-# @app.route("/search-test")
-# def search2():
-#     return render_template("search_modal.html")
-
-
-# Search mixtapes by title or description (header search bar)
+# Search mixtapes
 @app.route("/search")
 def search():
     query = request.args.get("q", "").strip()
