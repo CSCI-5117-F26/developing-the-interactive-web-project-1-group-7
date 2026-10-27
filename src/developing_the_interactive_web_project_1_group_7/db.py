@@ -318,14 +318,49 @@ def list_saved_mixtapes(user_id):
 
 
 # Mixtapes whose title or description contains the search text
+# def search_mixtapes(query):
+#     conn = get_db_connection()
+#     cur = conn.cursor(row_factory=dict_row)
+#     cur.execute(MIXTAPE_SUMMARY_SQL + " WHERE m.title ILIKE %s OR m.description ILIKE %s ORDER BY m.created_at DESC, m.id DESC", (f"%{query}%", f"%{query}%"))
+#     rows = cur.fetchall()
+#     cur.close()
+#     conn.close()
+#     return rows
+
+# Search titles, tags, users, descriptions and songs with PostgreSQL full-text search, best matches first(weightage)
 def search_mixtapes(query):
-    conn = get_db_connection()
-    cur = conn.cursor(row_factory=dict_row)
-    cur.execute(MIXTAPE_SUMMARY_SQL + " WHERE m.title ILIKE %s OR m.description ILIKE %s ORDER BY m.created_at DESC, m.id DESC", (f"%{query}%", f"%{query}%"))
-    rows = cur.fetchall()
-    cur.close()
-    conn.close()
-    return rows
+    with get_db_connection() as conn:
+        with conn.cursor(row_factory=dict_row) as cur:
+            cur.execute(
+                """
+                WITH searchable AS (
+           
+                             SELECT
+                        m.id,
+                        setweight(to_tsvector('english', m.title), 'A') ||
+                        setweight(to_tsvector('english',
+                            coalesce(u.username, '') || ' ' ||
+                            coalesce((SELECT string_agg(tag, ' ') FROM mixtape_tags WHERE mixtape_id = m.id), '')
+                        ), 'B') ||
+                        setweight(to_tsvector('english',
+                            coalesce(m.description, '') || ' ' ||
+                            coalesce((SELECT string_agg(t.title || ' ' || t.artist, ' ')
+                                      FROM mixtape_tracks mt JOIN tracks t ON t.spotify_id = mt.spotify_id
+                                      WHERE mt.mixtape_id = m.id), '')
+                        ), 'C') AS document
+                    FROM mixtapes m
+                    JOIN users u ON u.auth0_id = m.creator_id
+                )
+                """ + MIXTAPE_SUMMARY_SQL + """
+                JOIN searchable s ON s.id = m.id
+                CROSS JOIN websearch_to_tsquery('english', %(query)s) AS q
+                WHERE s.document @@ q OR m.title ILIKE %(pattern)s
+                ORDER BY ts_rank(s.document, q) DESC, m.created_at DESC
+                """,
+                {"query": query, "pattern": f"%{query}%"},
+            )
+
+            return cur.fetchall()
 
 
 # One mixtape with its ordered tracks and remix source, or None if it doesn't exist
