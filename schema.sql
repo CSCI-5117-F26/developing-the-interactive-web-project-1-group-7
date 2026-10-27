@@ -111,8 +111,9 @@ CREATE TABLE images (
         REFERENCES users(auth0_id),
     mixtape_id BIGINT NOT NULL
         REFERENCES mixtapes(id) on DELETE CASCADE,
-    stream BYTEA NOT NULL
-    PRIMARY KEY(user_id, mixtape_id)
+    stream BYTEA NOT NULL,
+
+    PRIMARY KEY (mixtape_id)
 );
 
 -- Might be useful by making certain reads faster

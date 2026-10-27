@@ -126,7 +126,7 @@
 
         <dialog id="change-cover">
             <h4>Change cover</h4>
-            <form method="POST" action="{{ url_for('upload_cover', mixtape_id=mixtape.id) }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ url_for('upload_cover', mode=mode, mixtape_id=mixtape.id) }}" enctype="multipart/form-data">
             <!-- <form method="POST" action="/mixtape/{{ mixtape.id }}/cover" enctype="multipart/form-data"> -->
                 <img id="cover-preview" src="{{ mixtape.cover_image_url or '/static/images/mixtape-cover.png' }}" alt="cover preview" width="200">
                 <br>
