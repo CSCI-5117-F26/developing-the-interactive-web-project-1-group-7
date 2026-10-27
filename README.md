@@ -24,13 +24,18 @@ CSCI 5117, Fall 2026, [assignment description](https://canvas.umn.edu/courses/57
 * Spotify API integration: adapting the authorization token example code to work with Flask, refreshing authorization tokens.
 * Uploading images: Storing images in a bytea column in PostgreSQL and retrieving them to display as an image again.
 * Drag to reorder: changing the position of tracks through drag and drop interaction, saving the updated position in the database.
-* UI responsiveness: limiting the sizes of containers that contain user-generated content while still making the content available in full.
+* Smart search: PostgreSQL full-text search with weighted fields (title, then tags and creator, then description and songs), word-stem matching, and ranked results.
 
 ## Testing Notes
 
-**Is there anything special we need to know in order to effectively test your app? (optional):**
+**Is there anything special we need to know in order to effectively test your app?**
 
-* ...
+* Log in with **Google** or **email/password**. Logging in with Google and with email/password using the same verified email reaches the same Mixtape account.
+* **Without logging in** you can browse the home page, filter by tags, search, open any mixtape, and export its song list. Creating, editing, remixing require logging in.
+* **Create a mixtape** with **Add Mixtape**: Click the cover to upload your own image (PNG, JPG, GIF or WebP, up to 5 MB); otherwise the first song's album art is used.
+* Only the **creator** can edit or delete a mixtape. On someone else's mixtape you can **Remix** it (save your own copy, linked as "Remixed from ***") or **save** it with the bookmark icon; saved mixtapes appear on your Profile.
+* **Export** (share icon on a mixtape) downloads its song list as a text file.
+* **UI responsiveness** limits the sizes of containers that contain user-generated content while still making the content available in full.
 
 
 ## Screenshots of Site
@@ -99,3 +104,4 @@ relied on external code, expertise, or anything else, please disclose that
 here:**
 * [The Spotify API documentation](https://developer.spotify.com/documentation/web-api) contains example code for setting up authentication that served as the basis of the Python/Flask version in our project. 
 * [The SortableJS documentation](https://sortablejs.github.io/Sortable/) contains example code for implementing sortable drag and drop using SortableJS Library. 
+* [The PostgreSQL full-text search documentation](https://www.postgresql.org/docs/current/textsearch-controls.html) used in our search feature, which is built on PostgreSQL's built-in full-text search (`to_tsvector`, `setweight`, `websearch_to_tsquery` and `ts_rank`) to match words across mixtape titles, tags, users, descriptions and songs, and ranks the best matches first.
