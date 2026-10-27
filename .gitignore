@@ -2,3 +2,5 @@
 .env
 __pycache__/
 *.pyc
+reset_db.py
+src/developing_the_interactive_web_project_1_group_7/additional_templates/
