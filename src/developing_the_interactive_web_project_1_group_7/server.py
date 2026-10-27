@@ -125,7 +125,13 @@ def signup():
 # Validate the Auth0 login response and log in to the matching Mixtape account
 @app.route("/callback")
 def callback():
-    token = oauth.auth0.authorize_access_token()
+    if request.args.get("error"):
+        return redirect(url_for("home"))
+    try:
+        token = oauth.auth0.authorize_access_token()
+    except Exception:
+        app.logger.exception("Login callback failed")
+        return redirect(url_for("login"))
     userinfo = dict(token["userinfo"])
 
     session.clear()
@@ -332,7 +338,7 @@ def create():
 
         file = request.files.get("image")
         if file is None or file.filename == "":
-            return None
+            file = None
         if file and not allowed_file(file.filename):
             return COVER_TYPE_ERROR, 400
 
@@ -364,7 +370,7 @@ def edit(mixtape_id):
 
         file = request.files.get("image")
         if file is None or file.filename == "":
-            return None
+            file = None
         if file and not allowed_file(file.filename):
             return COVER_TYPE_ERROR, 400
 
@@ -392,7 +398,7 @@ def remix(mixtape_id):
 
         file = request.files.get("image")
         if file is None or file.filename == "":
-            return None
+            file = None
         if file and not allowed_file(file.filename):
             return COVER_TYPE_ERROR, 400
 
@@ -510,9 +516,9 @@ def cover_image(mixtape_id):
 
 
 # Preview of the search results modal (frontend WIP)
-@app.route("/search-test")
-def search2():
-    return render_template("search_modal.html")
+# @app.route("/search-test")
+# def search2():
+#     return render_template("search_modal.html")
 
 
 # Search mixtapes by title or description (header search bar)
@@ -531,6 +537,8 @@ def search():
 @app.route("/mixtape/<int:mixtape_id>/save", methods=["POST"])
 @requires_auth
 def save(mixtape_id):
+    if get_mixtape(mixtape_id) is None:
+        return {"error": "This mixtape no longer exists."}, 404
     save_mixtape(session["user"]["id"], mixtape_id)
     app.logger.info("mixtape saved")
     return {"saved": True}
