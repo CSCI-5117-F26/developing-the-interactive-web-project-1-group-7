@@ -42,8 +42,14 @@ CSCI 5117, Fall 2026, [assignment description](https://canvas.umn.edu/courses/57
 
 **[Add a screenshot of each key page (around 4)](https://stackoverflow.com/questions/10189356/how-to-add-screenshot-to-readmes-in-github-repository)
 along with a very brief caption:**
-
-![](https://media.giphy.com/media/o0vwzuFwCGAFO/giphy.gif)
+**Homepage**
+![](screenshots/homepage.png)
+**Profile page**
+![](screenshots/profile.png)
+**View Mixtape**
+![](screenshots/view.png)
+**Remix Mixtape (edit mixtape is almost the same)**
+![](screenshots/remix.png)
 
 
 ## Mock-up 
@@ -98,6 +104,7 @@ Please do not document required libraries. or libraries that are mentioned in th
 
 * Spotify API: Used as a source of tracks that can be added to mixtapes, retrieving information such as song title, artist, album cover image, and duration. 
 * SortableJS: Used for drag and drop reordering of songs while editing mixtape.
+* FontAwesome: Used for icons
 
 **If there's anything else you would like to disclose about how your project
 relied on external code, expertise, or anything else, please disclose that
