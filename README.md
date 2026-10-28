@@ -43,14 +43,16 @@ CSCI 5117, Fall 2026, [assignment description](https://canvas.umn.edu/courses/57
 **[Add a screenshot of each key page (around 4)](https://stackoverflow.com/questions/10189356/how-to-add-screenshot-to-readmes-in-github-repository)
 along with a very brief caption:**
 
-**Homepage**
+**Homepage - browse everyone's mixtapes and filter them by tag**
 ![](screenshots/homepage.png)
-**Profile page**
+**Profile page - view our own mixtapes and the ones we saved**
 ![](screenshots/profile.png)
-**View Mixtape**
+**View Mixtape - showing a mixtape's cover, details, tags and the songs in it, along with actions to save, remix or export it**
 ![](screenshots/view.png)
-**Remix Mixtape (edit mixtape is almost the same)**
+**Remix Mixtape - remix someone else's mixtape and save our own copy (edit mixtape is almost the same)**
 ![](screenshots/remix.png)
+**Search View - showing results that matches mixtape title, creator, tags, description, and song titles and artists**
+![](screenshots/search.png)
 
 
 ## Mock-up 
