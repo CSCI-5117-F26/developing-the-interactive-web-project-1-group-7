@@ -1,0 +1,26 @@
+<!-- One saved song on a mixtape page. Expects `song` from get_mixtape()["tracks"]. -->
+<div class="pure-g song">
+    <div class="pure-u-4-24">
+        <img class="song-img" src="{{ song.album_image_url or url_for('static', filename='images/cover.png') }}" alt="{{ song.album or song.title }} cover" loading="lazy">
+    </div>
+    <div class="pure-u-16-24">
+        <h5>{{ song.title }}</h5>
+        <div class="song-meta">
+            <p>{{ song.artist }}</p>
+            {% if song.album %}<p>{{ song.album }}</p>{% endif %}
+        </div>
+    </div>
+    <div class="pure-u-2-24">
+        <p>{{ song.duration_ms | duration }}</p>
+    </div>
+    <div class="pure-u-2-24">
+        <a class="spotify-link" href="https://open.spotify.com/track/{{ song.spotify_id }}" target="_blank" rel="noopener" aria-label="Open {{ song.title }} on Spotify" title="Open on Spotify"><i class="fa-brands fa-spotify"></i></a>
+    </div>
+
+    {% if song.annotation %}
+    <div class="pure-u-4-24"></div>
+    <div class="pure-u-20-24">
+        <p class="song-note">{{ song.annotation }}</p>
+    </div>
+    {% endif %}
+</div>

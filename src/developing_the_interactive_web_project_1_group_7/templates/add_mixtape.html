@@ -1,0 +1,255 @@
+{% extends "base.html" %}
+
+{# Shared mixtape editor. mode is "create" (empty), "edit" (your mixtape) or "remix" (copy of someone's) #}
+{% block title %}{% if mode == "edit" %}Edit Mixtape{% elif mode == "remix" %}Remix Mixtape{% else %}Add Mixtape{% endif %}{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='profile.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='edit_mixtape.css') }}">
+
+<style>
+#mixtape-cover {
+  position: relative;
+}
+
+.cover-overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  opacity: 0;
+  transition: .3s ease;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 15px;
+}
+
+#mixtape-cover:hover .cover-overlay {
+  opacity: 1;
+}
+
+.cover-overlay-text {
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  white-space: nowrap;
+}
+</style>
+
+<section style="padding-bottom: 80px;">
+
+<div class="pure-g">
+    <div class="pure-u-1 pure-u-md-1-4 left-side">
+        <form class="pure-form" id="mixtape-form" method="POST" action="{{ form_action }}" enctype="multipart/form-data">
+            <div class="card" id="mixtape-cover">
+                <button type="button" command="show-modal" commandfor="change-cover" aria-label="{{ 'Add cover' if mode == 'create' else 'Change cover' }}" style="background: none; border: none; padding: 0; width: 100%; height: 100%; cursor: pointer;">
+                {% if mixtape.cover_image_url %}
+                <img id="mixtape-cover-img" class="album-cover" src="{{ mixtape.cover_image_url }}" alt="{{ mixtape.title }} cover">
+                {% else %}
+                <img id="mixtape-cover-img" src="/static/images/mixtape-cover.png" alt="mixtape cover" width="200">
+                {% endif %}
+                <span class="cover-overlay"><span class="cover-overlay-text"><i class="fa-solid {{ 'fa-plus' if mode == 'create' else 'fa-pen' }}"></i><br>{{ "Add cover" if mode == "create" else "Change cover" }}</span></span>
+                </button>
+            </div>
+            
+            <div class="pure-g" style="align-items: center;">
+                <div class="pure-u-21-24">
+                    <h3 class="mixtape-title" id="title-preview">{{ mixtape.title if mixtape else "Mixtape Title" }}</h3>
+                </div>
+                <div class="pure-u-3-24" style="text-align: right;">
+                    <button type="button" class="icon-button" command="show-modal" commandfor="edit-title" aria-label="Edit title"><i class="fa-solid fa-pen"></i></button>
+                </div>
+            </div>
+
+            {% if mode == "remix" %}
+            <p class="remix-note"><i class="fa-solid fa-code-branch"></i> Remixing "{{ mixtape.title }}" by {{ mixtape.creator_name }}. Saving creates your own copy.</p>
+            {% endif %}
+
+            <p class="mixtape-owner">{{ name }}</p>
+
+            <div class="pure-g" style="align-items: center;">
+                <div class="pure-u-21-24">
+                    <p id="description-preview" class="mixtape-desc description-preview"></p>
+                </div>
+                <div class="pure-u-3-24" style="text-align: right;">
+                    <button type="button" class="icon-button" command="show-modal" commandfor="add-description" aria-label="Edit description"><i class="fa-solid fa-pen"></i></button>
+                </div>
+            </div>
+
+            <div class="pure-g" style="align-items: center;">
+                <div class="pure-u-21-24">
+                    <div class="filters tag-preview">
+                        <ul id="tag-preview"></ul>
+                    </div>
+                </div>
+                <div class="pure-u-3-24" style="text-align: right;">
+                    <button type="button" class="icon-button" command="show-modal" commandfor="add-tag" aria-label="Edit tags"><i class="fa-solid fa-pen"></i></button>
+                </div>
+            </div>
+
+            <dialog id="change-cover">
+                <h4>{{ "Add a cover" if mode == "create" else "Change cover" }}</h4>
+                <img id="cover-preview" src="{{ mixtape.cover_image_url if mixtape and mixtape.cover_image_url else '/static/images/mixtape-cover.png' }}" alt="cover preview" width="200">
+                <br>
+                <input id="cover-input" name="image" type="file" accept=".png,.jpg,.jpeg,.gif,.webp">
+                <div class="dialog-buttons">
+                    <button type="button" class="pure-button" commandfor="change-cover" command="close">Done</button>
+                </div>
+            </dialog>
+
+            <dialog id="edit-title">
+                <h4>Edit the title</h4>
+                <input type="text" name="title" class="pure-input-1" placeholder="Mixtape Title" maxlength="150" required value="{{ mixtape.title if mixtape }}">
+                <div class="dialog-buttons">
+                    <button type="button" class="pure-button" commandfor="edit-title" command="close">Done</button>
+                </div>
+            </dialog>
+
+            <dialog id="add-description">
+                <h4>Add a description</h4>
+                <textarea name="description" class="pure-input-1" rows="4" maxlength="500" placeholder="What's this mixtape about?">{{ mixtape.description or "" if mixtape }}</textarea>
+                <div class="dialog-buttons">
+                    <button type="button" class="pure-button" commandfor="add-description" command="close">Done</button>
+                </div>
+            </dialog>
+
+            <dialog id="add-tag">
+                <h4>Add tags</h4>
+                {% for tag in mixtape_tags %}
+                <label for="tag-{{ tag }}" class="pure-checkbox">
+                    <input id="tag-{{ tag }}" type="checkbox" name="tags" value="{{ tag }}" {% if mixtape and tag in mixtape.tags %}checked{% endif %}> {{ tag }}
+                </label>
+                {% endfor %}
+                <div class="dialog-buttons">
+                    <button type="button" class="pure-button" commandfor="add-tag" command="close">Done</button>
+                </div>
+            </dialog>
+        </form>
+    </div>
+
+    <div class="pure-u-1 pure-u-md-3-4 right-side">
+        <!-- Songs added from the search below. Each row carries hidden track_ids /
+             annotations inputs (form="mixtape-form"), so the DOM order is the order saved to the database. -->
+        <div class="selected-songs-wrapper pure-form">
+            <div class="pure-g song-header">
+                <div class="pure-u-2-24"></div>
+                <div class="pure-u-4-24"></div>
+                <div class="pure-u-12-24">Song / Artist</div>
+                <div class="pure-u-2-24"><i class="fa-regular fa-clock" aria-label="Duration"></i></div>
+                <div class="pure-u-2-24"></div>
+            </div>
+            <p id="no-songs" class="empty-songs">No songs yet. Search Spotify below and click Add.</p>
+            <div id="selected-songs"></div>
+        </div>
+
+        <h2>Find the songs from Spotify</h2>
+
+        <div style="padding: 0 50px;">
+            <form class="pure-form" id="song-search" action="{{ url_for('search_spotify_tracks') }}" method="GET">
+                <input id="q" name="q" type="search" required maxlength="100" placeholder="Search song..."/>
+                <button type="submit" class="pure-button login">Search</button>
+            </form>
+
+            <p id="search-status" class="search-status" aria-live="polite"></p>
+            <div id="search-results"></div>
+        </div>
+    </div>
+</div>
+
+<dialog id="remove-song">
+    <h4>Remove this song?</h4>
+    <p>Are you sure you want to remove "<span id="remove-song-title"></span>" from this mixtape?</p>
+    <div class="dialog-buttons">
+        <button type="button" class="pure-button button-cancel" commandfor="remove-song" command="close">Cancel</button>
+        <button type="button" class="pure-button button-confirm" id="confirm-remove-song">Remove</button>
+    </div>
+</dialog>
+<template id="selected-song-template">
+    <div class="pure-g song selected-song">
+        <input type="hidden" name="track_ids" form="mixtape-form">
+        <div class="pure-u-2-24">
+            <button type="button" class="icon-button remove-song" aria-label="Remove song" title="Remove song"><i class="fa-solid fa-minus"></i></button>
+        </div>
+        <div class="pure-u-4-24">
+            <img class="song-img" alt="">
+        </div>
+        <div class="pure-u-12-24">
+            <h5 class="song-title"></h5>
+            <div class="song-meta">
+                <p class="song-artist"></p>
+                <p class="song-album"></p>
+            </div>
+        </div>
+        <div class="pure-u-2-24">
+            <p class="song-duration"></p>
+        </div>
+        <div class="pure-u-2-24">
+            <i class="fa-solid fa-bars drag-handle" aria-label="Drag to reorder" title="Drag to reorder"></i>
+        </div>
+
+        <div class="pure-u-6-24"></div>
+        <div class="pure-u-18-24">
+            <input type="text" name="annotations" form="mixtape-form" class="song-note-input" maxlength="110" placeholder="Add a note about why this song is here (optional)">
+        </div>
+    </div>
+</template>
+
+<template id="search-result-template">
+    <div class="pure-g song">
+        <div class="pure-u-4-24">
+            <img class="song-img" alt="">
+        </div>
+        <div class="pure-u-16-24">
+            <h5 class="song-title"></h5>
+            <div class="song-meta">
+                <p class="song-artist"></p>
+                <p class="song-album"></p>
+            </div>
+        </div>
+        <div class="pure-u-4-24">
+            <button type="button" class="pure-button login add-song">Add</button>
+        </div>
+    </div>
+</template>
+
+<div class="editor-actions">
+    <a href="{{ url_for('view', mixtape_id=mixtape.id) if mixtape else url_for('home') }}" class="pure-button login button-cancel">Cancel</a>
+    <button type="submit" form="mixtape-form" class="pure-button login">
+        {% if mode == "edit" %}Save changes{% elif mode == "remix" %}Save remix{% else %}Save{% endif %}
+    </button>
+</div>
+
+</section>
+
+<!-- Songs already in the mixtape (edit / remix); add_mixtape.js adds them to the list on load -->
+<script id="initial-songs" type="application/json">{{ (mixtape.tracks if mixtape else []) | tojson }}</script>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='songs.css') }}">
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
+<script src="{{ url_for('static', filename='add_mixtape.js') }}"></script>
+
+<script>
+const coverInput = document.getElementById("cover-input");
+const coverImage = document.getElementById("mixtape-cover-img");
+
+coverInput.onchange = evt => {
+    const [file] = coverInput.files
+    if (file) {
+        const url = URL.createObjectURL(file)
+        document.getElementById("cover-preview").src = url
+        coverImage.src = url
+        coverImage.className = "album-cover"
+        coverImage.removeAttribute("width")
+    }
+}
+</script>
+
+{% endblock %}

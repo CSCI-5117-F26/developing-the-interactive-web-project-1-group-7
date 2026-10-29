@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Verify Your Email{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='profile.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='edit_mixtape.css') }}">
+
+<section class="username-page">
+    <div class="username-card">
+        <i class="fa-solid fa-envelope-circle-check username-avatar" aria-hidden="true"></i>
+        <h2>Please verify your email</h2>
+        <p class="username-help">
+            We sent a verification link to {{ email or "your email address" }}.
+            Click the link in that email, then log in again.
+        </p>
+
+        <div class="username-buttons center">
+            <a href="{{ url_for('logout') }}" class="pure-button button-cancel">Use a different account</a>
+            <a href="{{ url_for('login') }}" class="pure-button login">I've verified, log in</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

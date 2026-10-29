@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Homepage{% endblock %}
+
+{% block content %}
+<section>
+
+    <h2>Browse recent mixtapes</h2>
+    <div class="filters">
+        <ul> 
+            {% for tag in selected_tags %}
+            <li>
+                <a href="{{ url_for('home', tag=selected_tags | reject('equalto', tag) | list) }}" class="pure-button tag-{{ tag }} selected">
+                    {{ tag }} <i class="fa-solid fa-xmark"></i>
+                </a>
+            </li>
+            {% endfor %}
+            {% if selected_tags %}
+            <li>
+                <a href="{{ url_for('home') }}" class="pure-button clear-filter">
+                    <i class="fa-solid fa-xmark"></i> Clear filters
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+        <ul>
+            {% for tag in mixtape_tags %}
+                {% if tag not in selected_tags %}
+                    <li>
+                        <a href="{{ url_for('home', tag=selected_tags + [tag]) }}" class="pure-button tag-{{ tag }}"> {{ tag }}
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="mixtapes">
+        <div class="pure-g">
+            {% for mixtape in mixtapes %}
+                <div class="pure-u-1 pure-u-md-1-2 pure-u-lg-1-4">
+                    {% include "mixtape_template.html" %}
+                </div>
+            {% else %}
+                <p class="no-mixtapes">
+                    {% if selected_tags %}
+                        No mixtapes match these tags yet.
+                    {% else %}
+                        No mixtapes yet. <a href="{{ url_for('create') }}">Make the first one!</a>
+                    {% endif %}
+                </p>
+            {% endfor %}
+        </div>
+    </div>
+
+</section>
+
+
+{% endblock %}

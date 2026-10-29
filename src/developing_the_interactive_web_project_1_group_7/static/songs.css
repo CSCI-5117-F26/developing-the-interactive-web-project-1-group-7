@@ -1,0 +1,134 @@
+.song {
+    align-items: center;
+    padding: 5px 0;
+    border-radius: 10px;
+}
+
+.song:hover {
+    background-color: #303030;
+}
+
+.song-img {
+    display: block;
+    width: 80%;
+    max-width: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+    background-color: #fff;
+}
+
+.song h5 {
+    margin: 0 0 6px;
+}
+
+.song-meta {
+    display: flex;
+    gap: 24px;
+    font-size: 15px;
+    flex-wrap: wrap;
+}
+
+.song-meta {
+    margin: 0;
+}
+
+.song .pure-u-2-24 {
+    text-align: center;
+    font-size: 15px;
+}
+
+.song .fa-ellipsis .fa-bars .fa-minus {
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.description-preview {
+    max-width: 600px;
+    margin: 0 0 12px 0;
+    white-space: pre-line;
+}
+
+.filters.tag-preview {
+    padding: 0;
+}
+
+.tag-preview .pure-button {
+    cursor: default;
+}
+
+.remix-note {
+    color: #cccccc;
+    font-size: 14px;
+    margin: 0 0 8px 0;
+}
+
+.selected-songs-wrapper {
+    padding: 20px 50px;
+}
+
+.selected-song {
+    padding: 10px 0;
+}
+
+.empty-songs,
+.search-status {
+    color: #cccccc;
+    font-size: 15px;
+}
+
+.icon-button {
+    background: none;
+    border: none;
+    color: inherit;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.drag-handle {
+    cursor: grab;
+}
+
+.pure-form .song-note-input {
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 4px;
+}
+
+.song .add-song:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
+.song-note {
+    margin-top: 4px;
+    padding-left: 14px;
+    border-left: 3px solid rgba(255, 255, 255, 0.85);
+    border-radius: 2px;
+    font-size: 15px;
+}
+
+.song-header {
+    color: #cccccc;
+    font-size: 14px;
+    border-bottom: 1px solid #444444;
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+}
+
+.song-header .pure-u-2-24 {
+    text-align: center;
+}
+
+.editor-actions {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 12px 30px;
+    background: rgba(20, 20, 20, 0.92);
+    border-top: 1px solid #333333;
+    z-index: 99;
+}

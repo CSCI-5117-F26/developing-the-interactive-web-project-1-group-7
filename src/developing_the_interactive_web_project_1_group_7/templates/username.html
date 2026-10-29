@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{# Username form. mode is "choose" (first login, required) or "edit" (from the profile page) #}
+{% block title %}{% if mode == "edit" %}Edit Profile{% else %}Pick a Username{% endif %}{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='profile.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='edit_mixtape.css') }}">
+
+<section class="username-page">
+    <div class="username-card">
+        <i class="fa-solid fa-circle-user username-avatar" aria-hidden="true"></i>
+
+        {% if mode == "edit" %}
+        <h2>Edit profile</h2>
+        <p class="username-help">Your username is shown on your mixtapes and profile.</p>
+        {% else %}
+        <h2>Welcome to Mixtape!</h2>
+        <p class="username-help">Pick a username. This is how other people will see you. You can change it later in your profile.</p>
+        {% endif %}
+
+        <form class="pure-form" method="POST" id="username-form">
+            <label for="username" class="username-label">Username</label>
+            <div class="username-input">
+                <span class="username-at" aria-hidden="true">@</span>
+                <input id="username" name="username" type="text" value="{{ username }}" required
+                       minlength="3" maxlength="20" pattern="[A-Za-z0-9_]{3,20}" autocomplete="off" autofocus
+                       spellcheck="false" aria-describedby="username-checks"
+                       data-current="{{ current_username or '' }}"
+                       data-check-url="{{ url_for('username_available') }}">
+            </div>
+
+            <ul class="username-checks" id="username-checks" aria-live="polite">
+                <li id="check-format"><i class="fa-solid fa-circle"></i> 3–20 characters: letters, numbers and _</li>
+                <li id="check-available"><i class="fa-solid fa-circle"></i> Not taken by anyone else</li>
+            </ul>
+
+            {% if error %}
+            <p class="username-error" role="alert">{{ error }}</p>
+            {% endif %}
+
+            <p class="username-preview">Your mixtapes will show: <span>by <strong id="username-preview">{{ username or "username" }}</strong></span></p>
+
+            <div class="username-buttons">
+                {% if mode == "edit" %}
+                <a href="{{ url_for('profile') }}" class="pure-button button-cancel">Cancel</a>
+                <button type="submit" class="pure-button login" id="username-submit">Save</button>
+                {% else %}
+                <button type="submit" class="pure-button login" id="username-submit">Continue</button>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</section>
+
+<script src="{{ url_for('static', filename='username.js') }}"></script>
+{% endblock %}

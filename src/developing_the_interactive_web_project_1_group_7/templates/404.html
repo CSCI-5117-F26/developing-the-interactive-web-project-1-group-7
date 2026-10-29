@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block title %}Not Found{% endblock %}
+
+{% block content %}
+<section>
+    <h2>Page not found</h2>
+    <p class="no-mixtapes">That mixtape or page doesn't exist. It may have been deleted. <a href="{{ url_for('home') }}">Browse mixtapes</a></p>
+</section>
+{% endblock %}

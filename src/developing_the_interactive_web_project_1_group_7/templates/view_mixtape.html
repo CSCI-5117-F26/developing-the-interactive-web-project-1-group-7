@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+
+{% block title %}View Mixtape{% endblock %}
+
+{% block content %}
+
+<style>
+#snackbar {
+  visibility: hidden;
+  min-width: 250px;
+  margin-left: -125px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 2px;
+  padding: 16px;
+  position: fixed;
+  z-index: 1;
+  left: 50%;
+  bottom: 30px;
+  font-size: 17px;
+}
+
+#snackbar.show {
+  visibility: visible;
+  -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+  animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+@-webkit-keyframes fadein {
+  from {bottom: 0; opacity: 0;} 
+  to {bottom: 30px; opacity: 1;}
+}
+
+@keyframes fadein {
+  from {bottom: 0; opacity: 0;}
+  to {bottom: 30px; opacity: 1;}
+}
+
+@-webkit-keyframes fadeout {
+  from {bottom: 30px; opacity: 1;} 
+  to {bottom: 0; opacity: 0;}
+}
+
+@keyframes fadeout {
+  from {bottom: 30px; opacity: 1;}
+  to {bottom: 0; opacity: 0;}
+}
+</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='edit_mixtape.css') }}">
+
+<section>
+
+<div class="pure-g">
+    <div class="pure-u-1 pure-u-md-1-4 left-side">
+        <div class="card" id="mixtape-cover">
+            {% if mixtape.cover_image_url %}
+            <img id="mixtape-cover-img" class="album-cover" src="{{ mixtape.cover_image_url }}" alt="{{ mixtape.title }} cover">
+            {% else %}
+            <img id="mixtape-cover-img" src="/static/images/mixtape-cover.png" alt="mixtape cover" width="200">
+            {% endif %}
+        </div>
+        <div class="pure-g">
+            <div class="pure-3-4">
+                <h3 class="mixtape-title" id="mixtape-title">{{ mixtape.title }}</h3>
+            </div>
+        </div>
+        {% if mixtape.description %}
+        <div class="pure-g">
+            <div class="pure-u-3-4">
+                <p class="mixtape-desc" id="mixtape-desc">{{ mixtape.description }}</p>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="pure-g stats">
+            <div class="pure-u-1-3"><p id="total-tracks">{{ mixtape.track_count }} {{ "Track" if mixtape.track_count == 1 else "Tracks" }}</p></div>
+            <div class="pure-u-1-3"><p><span id="total-save">{{ mixtape.saved_count }}</span> Saved</p></div>
+        </div>
+        {% if is_owner %}
+        <p class="mixtape-owner" id="mixtape-owner">By You</p>
+        {% else %}
+        <p class="mixtape-owner" id="mixtape-owner">By {{ mixtape.creator_name }}</p>
+        {% endif %}
+
+        {% if mixtape.tags %}
+        <ul class="filters card-tags view-tags">
+            {% for tag in mixtape.tags %}
+            <li><a href="{{ url_for('home', tag=tag) }}" class="pure-button tag-{{ tag }}">{{ tag }}</a></li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        {% if is_owner %}
+        
+        <div class="actions pure-g">
+            <div class="pure-u-9-24">
+                <div id="remix" class="remix-button"><a href="{{ url_for('remix', mixtape_id=mixtape.id) }}" style="color: black; text-decoration: none;"><i class="fa-solid fa-compact-disc"></i><span style="margin-left: 10px;">Remix</span></a></div>
+            </div>
+            <div class="pure-u-9-24">
+                <div id="edit" class="remix-button"><a href="{{ url_for('edit', mixtape_id=mixtape.id) }}" style="color: black; text-decoration: none;"><i class="fa-regular fa-pen-to-square"></i><span style="margin-left: 10px;">Edit</span></a></div>
+            </div>
+            <div class="pure-u-1-24">
+                <a href="{{ url_for('export', mixtape_id=mixtape.id) }}" id="export" class="save icon-button" aria-label="Export mixtape" title="Download song list"><i class="fa-solid fa-share"></i></a>
+            </div>
+            <div class="pure-u-1-24">
+                <button type="button" class="save icon-button" command="show-modal" commandfor="delete-mixtape" aria-label="Delete mixtape"><i class="fa-solid fa-trash-can"></i></button>
+            </div>
+        </div>
+
+        <dialog id="delete-mixtape">
+            <h4>Delete this Mixtape?</h4>
+            <p>Are you sure you want to delete "{{ mixtape.title }}" from your library?</p>
+            <form method="POST" action="/mixtape/{{ mixtape.id }}/delete" class="dialog-buttons">
+                <button type="button" class="pure-button button-cancel" commandfor="delete-mixtape" command="close">Cancel</button>
+                <button type="submit" class="pure-button button-confirm">Delete</button>
+            </form>
+        </dialog>
+
+        {% elif session.get("user") %}
+        <div class="actions pure-g">
+            <div class="pure-u-16-24">
+                <div id="remix" class="remix-button"><a href="{{ url_for('remix', mixtape_id=mixtape.id) }}" style="color: black; text-decoration: none;"><i class="fa-solid fa-compact-disc"></i><span style="margin-left: 10px;">Remix</span></a></div>
+            </div>
+            <div class="pure-u-1-24">
+                <a href="{{ url_for('export', mixtape_id=mixtape.id) }}" id="export" class="save icon-button" aria-label="Export mixtape" title="Download song list"><i class="fa-solid fa-share"></i></a>
+            </div>
+            <div class="pure-u-1-24"></div>
+            <div class="pure-u-1-24">
+                <button type="button" id="save" class="save icon-button" aria-pressed="{{ 'true' if saved else 'false' }}" aria-label="Save mixtape"><i id="save-icon" class="{{ 'fa-solid' if saved else 'fa-regular' }} fa-bookmark"></i></button>
+            </div>
+        </div>
+
+        {% else %}
+        <div class="actions pure-g">
+            <div class="pure-u-16-24">
+                <div id="remix" class="remix-button"><a href="{{ url_for('remix', mixtape_id=mixtape.id) }}" style="color: grey; text-decoration: none;"><i class="fa-solid fa-compact-disc"></i><span style="margin-left: 10px;">Remix</span></a></div>
+            </div>
+            <div class="pure-u-1-24">
+                <a href="{{ url_for('export', mixtape_id=mixtape.id) }}" id="export" class="save icon-button" aria-label="Export mixtape" title="Download song list"><i class="fa-solid fa-share"></i></a>
+            </div>
+            <div class="pure-u-1-24"></div>
+            <div class="pure-u-1-24">
+                <div onclick="showSnackbar('Log in to save mixtapes')" id="save" class="save "><i class="fa-regular fa-bookmark" style="color: grey; cursor: pointer;"></i></div>
+            </div>
+        </div>
+
+        {% endif %}
+
+        {% if mixtape.remixed_from %}
+        <div class="remix-source-row" style="margin-top: 15px; display:flex; align-items: flex-start; gap:10px">
+            <i class="fa-solid fa-code-branch"></i> <span id="remix-source">Remixed from <a href="{{ url_for('view', mixtape_id=mixtape.remixed_from.id) }}">"{{ mixtape.remixed_from.title }}"</a> by {{ mixtape.remixed_from.creator_name }}</span>
+        </div>
+        {% elif mixtape.remixed_from_id %}
+        <div class="remix-source-row" style="margin-top: 15px; display:flex; align-items: flex-start; gap:10px">
+            <i class="fa-solid fa-code-branch"></i> <span id="remix-source">Remixed from a deleted mixtape</span>
+        </div>
+        {% endif %}
+    </div>
+    <div class="pure-u-1 pure-u-md-3-4 right-side">
+        <div class="pure-g song-header">
+            <div class="pure-u-4-24"></div>
+            <div class="pure-u-16-24">Song / Artist</div>
+            <div class="pure-u-2-24"><i class="fa-regular fa-clock" aria-label="Duration"></i></div>
+            <div class="pure-u-2-24"></div>
+        </div>
+        {% for song in mixtape.tracks %}
+            {% include "./components/song_row.html" %}
+        {% else %}
+            <p class="empty-songs">This mixtape doesn't have any songs yet.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<div id="snackbar"></div>
+
+</section>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='songs.css') }}">
+
+<script>
+const saveButton = document.querySelector("button#save");
+
+if (saveButton) {
+    saveButton.addEventListener("click", async () => {
+        const wasSaved = saveButton.getAttribute("aria-pressed") === "true";
+        const action = wasSaved ? "unsave" : "save";
+
+        saveButton.disabled = true;
+        try {
+            const response = await fetch(`/mixtape/{{ mixtape.id }}/${action}`, { method: "POST" });
+            if (response.status === 404) {
+                showSnackbar("This mixtape does not exist.");
+                return;
+            }
+            if (!response.ok) throw new Error();
+            const data = await response.json();
+
+            const icon = document.getElementById("save-icon");
+            icon.classList.toggle("fa-solid", data.saved);
+            icon.classList.toggle("fa-regular", !data.saved);
+            saveButton.setAttribute("aria-pressed", String(data.saved));
+
+            const count = document.getElementById("total-save");
+            if (data.saved !== wasSaved) {
+                count.textContent = Number(count.textContent) + (data.saved ? 1 : -1);
+            }
+            showSnackbar(data.saved ? "Mixtape Saved!" : "Removed from saved");
+        } catch {
+            showSnackbar("Couldn't update. Please try again.");
+        } finally {
+            saveButton.disabled = false;
+        }
+    });
+}
+
+function showSnackbar(message) {
+  var x = document.getElementById("snackbar");
+  x.textContent = message;
+  x.className = "show";
+  setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+}
+</script>
+
+{% endblock %}
